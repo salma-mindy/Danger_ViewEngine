@@ -193,7 +193,7 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                         </div>
                         <div class="card-body">
                             <!-- Modal body -->
-                            <div class="modal-body px-4">
+                            <div class="modal-body px-2">
                                 <form action="" method="post">
                                     <div class="">
                                         <h5 style="color: #ffc500">Informations personnelle</h5>

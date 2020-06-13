@@ -140,11 +140,11 @@ require_once "../php/db.php";
                                             <table id="user_data" class="table table-striped table-sm table-bordered" style="color: #fff;">
                                                 <thead>
                                                     <tr class="text-center">
-                                                        <th>Image</th>
-                                                        <th>Nom</th>
-                                                        <th>Prénom</th>
-                                                        <th>Email</th>
-                                                        <th>Téléphone</th>
+                                                        <th>Numero d'ordre</th>
+                                                        <th>Déscription</th>
+                                                        <th>Victimes</th>
+                                                        <th>Lieu</th>
+                                                        <th>Date</th>
                                                         <th>Actions</th>
                                                     </tr>
                                                 </thead>

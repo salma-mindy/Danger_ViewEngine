@@ -29,14 +29,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
       }
     // validation genre
       if (empty($_POST["genre"])) {
-        $genre_err = "Le Genre est oblidatoire";
+        $genre_err = "Le Genre est obligatoire";
       } else {
         $genre = trim($_POST["genre"]);
       }
     
     // validation lieu de residence
       if (empty($_POST["adresse"])) {
-        $adresse_err = "Le Lieu de Résidence est oblidatoire";
+        $adresse_err = "Le Lieu de Résidence est obligatoire";
       } else {
         $adresse = trim($_POST["adresse"]);
       }
@@ -63,7 +63,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 $param_email = trim($_POST["email"]);
                 if($stmt->execute()){
                     if($stmt->rowCount() == 1){
-                        $email_err = "Cet e-mail est déjà associer à un compte.";
+                        $email_err = "Cet e-mail est déjà associé à un compte.";
                     } else{
                         $email = trim($_POST["email"]);
                     }
@@ -90,7 +90,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     } else{
         $confMotDePasse = trim($_POST["confMotDePasse"]);
         if(empty($confMotDePasse_err) && ($motDePasse != $confMotDePasse)){
-            $confMotDePasse_err = "Les mot de passe ne correspondent pas.";
+            $confMotDePasse_err = "Les mots de passe ne correspondent pas.";
         }
     }
     
@@ -132,7 +132,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 $nomOp = $_POST["nom"];
                 $emailOp = $_POST["email"];
                 $pass = $_POST["motDePasse"];
-                $errorMsg  = "Opérateur <b>$nomOp</b> ajouté avec succès. Ces identifiants de connexion sont : <br> <b>Email:</b> $emailOp <br> <b>Mot de passe (a changer avant 24h):</b> $pass";
+                $errorMsg  = "Opérateur <b>$nomOp</b> ajouté avec succès. Ces identifiants de connexion sont : <br> <b>Email:</b> $emailOp <br> <b>Mot de passe (à changer avant 24h):</b> $pass";
             } else{
                 $errorMsg = "Quelque chose a mal tourné. Veuillez réessayer.";
             }

@@ -8,7 +8,8 @@
     {
         $db = new PDO("mysql:host={$db_host};dbname={$db_name}",$db_user,$db_password);
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-       // $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
+        //retourner les resultats en objet
+        // $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
     }
     catch (PDOEXCEPTION $e)
     {

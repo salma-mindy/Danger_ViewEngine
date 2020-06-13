@@ -7,6 +7,7 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
     header("location: ../index.php");
     exit;
 }
+//var_dump($_SESSION);exit();
 ?>
     <!DOCTYPE html>
     <html lang="fr">

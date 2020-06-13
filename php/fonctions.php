@@ -23,7 +23,7 @@
 			return $row["image"];
 		}
 	}
-
+	
 	function get_all_infos()
 	{
 		include('db.php');

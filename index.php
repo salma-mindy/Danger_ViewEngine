@@ -26,13 +26,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
  
     // verifier email
     if(empty(trim($_POST["email"]))){
-        $email_err = "Veillez renseigner votre adresse email.";
+        $email_err = "Veuillez renseigner votre adresse email.";
     }else{
         $email = trim($_POST["email"]);
     }
     // verifer mot de passe 
     if(empty(trim($_POST["motDePasse"]))){
-        $motDePasse_err = "Veillez renseigner votre mot de passe.";
+        $motDePasse_err = "Veuillez renseigner votre mot de passe.";
     } else{
         $motDePasse = trim($_POST["motDePasse"]);
     }
@@ -50,7 +50,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 // Vérifiez si l'email existe, si oui, vérifiez le mot de passe
                 if($stmt->rowCount() == 1){
                     if($result = $stmt->fetch()){
+                        //var_dump($result);exit();
                         $id = $result["id"];
+                       /*  recuperation d'un objet
+                        $id = $result->id; */
                         $email = $result["email"];
                         $prenom = $result["prenom"];
                         $password = $result["motDePasse"];
@@ -128,7 +131,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         </div>
         <input class="btn btn-lg btn-block" type="submit" name="btn_login" value="S'IDENTIFIER">
             <div class="text-center mb-4 mt-2">
-              <small>Vous avez oublier votre mot de passe ? Cliquez <a href="#"> ici</a></small>
+              <small>Vous avez oublié votre mot de passe ? Cliquez <a href="#"> ici</a></small>
             </div> 
     </form>
 

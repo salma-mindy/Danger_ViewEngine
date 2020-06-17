@@ -1,7 +1,7 @@
 <?php
 // Initialize the session
 session_start();
- 
+
 // Vérifions si l'utilisateur est connecté, sinon redirigeons-le vers la page de connexion
 if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
     header("location: ../index.php");
@@ -111,11 +111,6 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
 
                     <!-- Contenue de la page -->
                     <div class="container-fluid">
-                        <!--     <?php if($errorMsg != ""): ?>
-                        <div class="alert alert-success" role="alert">
-                            <?php echo $errorMsg; ?>
-                        </div>
-                        <?php endif ?> -->
                         <div class="card mb-4">
                             <div class="h4 card-header font-weight-normal" style="background: #a19e9e !important">
                                 <div class="row">
@@ -130,7 +125,15 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                                     </div>
                                 </div>
                             </div>
+                            <?php
+                                require_once '../php/db.php';
+                                $sql = "SELECT utilisateurs.id,utilisateurs.nom,utilisateurs.prenom,utilisateurs.email,utilisateurs.contact FROM utilisateurs LEFT JOIN roles ON roles.id=utilisateurs.idRole WHERE roles.intituleRole = 'ROLE_OPERATEUR'";
+                                $query = $db->prepare($sql);
+                                
+                                $query->execute();
 
+                                $results = $query->fetchAll();
+                            ?>
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-lg-12">
@@ -138,7 +141,7 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                                             <table id="user_data" class="table table-striped table-sm table-bordered" style="color: #fff;">
                                                 <thead>
                                                     <tr class="text-center">
-                                                        <th>Image</th>
+                                                        <th>Id</th>
                                                         <th>Nom</th>
                                                         <th>Prénom</th>
                                                         <th>Email</th>
@@ -146,6 +149,41 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                                                         <th>Actions</th>
                                                     </tr>
                                                 </thead>
+                                                <tbody>
+                                                    
+                                                    <tbody class="text-center text-secondary">
+                                                        <?php foreach($results as $result): ?>
+                                                        <tr>
+                                                            <td>
+                                                                <?= $result["id"]; ?>
+                                                            </td>
+                                                            <td>
+                                                                <?= $result["nom"]; ?>
+                                                            </td>
+                                                            <td>
+                                                                <?=  $result["prenom"]; ?>
+                                                            </td>
+                                                            <td>
+                                                                <?=  $result["email"]; ?>
+                                                            </td>
+                                                            <td>
+                                                                <?=  $result["contact"]; ?>
+                                                            </td>
+                                                            <td>
+                                                                <a href="" class="text-success">
+                                                                    <i class="fa fa-info-circle fa-lg"></i>
+                                                                </a>&nbsp;&nbsp;
+                                                                <a href="" class="text-primary">
+                                                                    <i class="fa fa-edit fa-lg"></i>
+                                                                </a>&nbsp;&nbsp;
+                                                                <a href="" class="text-danger">
+                                                                    <i class="fa fa-trash fa-lg"></i>
+                                                                </a>&nbsp;&nbsp;
+                                                            </td>
+
+                                                        </tr>
+                                                        <?php endforeach; ?>
+                                                    </tbody>
                                             </table>
                                         </div>
                                     </div>
@@ -193,7 +231,7 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                         </div>
                         <div class="card-body">
                             <!-- Modal body -->
-                            <div class="modal-body px-2">
+                            <div class="modal-body px-4">
                                 <form action="" method="post">
                                     <div class="">
                                         <h5 style="color: #ffc500">Informations personnelle</h5>
@@ -214,30 +252,30 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                              <div class="col-sm-3 mb-3 mb-sm-0 ">
-                                <input type="text " class="form-control form-control-user " id="genre " name="genre " placeholder="Genre ">
-                                <small style="color: #ff1300 !important ">
+                                        <div class="col-sm-3 mb-3 mb-sm-0 ">
+                                            <input type="text " class="form-control form-control-user " id="genre " name="genre " placeholder="Genre ">
+                                            <small style="color: #ff1300 !important ">
                                     <span class="align-items-center text-center "></span>
                                 </small>
-                              </div>
-                              <div class="col-sm-4 mb-3 mb-sm-0 ">
-                                <input type="text " class="form-control form-control-user " id="adresse " name="adresse " placeholder="Lieu de résidence ">
-                                <small style="color: #ff1300 !important ">
-                                    <span class="align-items-center text-center "></span>
-                                </small> 
-                             </div>
-                              <div class="col-sm-5 ">
-                                <input type="text " class="form-control form-control-user " id="contact " name="contact " placeholder="Numéro Téléphone ">
-                                <small style="color: #ff1300 !important ">
+                                        </div>
+                                        <div class="col-sm-4 mb-3 mb-sm-0 ">
+                                            <input type="text " class="form-control form-control-user " id="adresse " name="adresse " placeholder="Lieu de résidence ">
+                                            <small style="color: #ff1300 !important ">
                                     <span class="align-items-center text-center "></span>
                                 </small>
-                              </div>
-                            </div>
-                            <div class="mt-3 ">
-                                <h5 style="color: #ffc500 ">Identifiants de connexion</h5>
-                            </div>
-                            <hr>
-                            <div class="form-group row">
+                                        </div>
+                                        <div class="col-sm-5 ">
+                                            <input type="text " class="form-control form-control-user " id="contact " name="contact " placeholder="Numéro Téléphone ">
+                                            <small style="color: #ff1300 !important ">
+                                    <span class="align-items-center text-center "></span>
+                                </small>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 ">
+                                        <h5 style="color: #ffc500 ">Identifiants de connexion</h5>
+                                    </div>
+                                    <hr>
+                                    <div class="form-group row">
                                         <div class="col-sm-6 mb-3 mt-2 mb-sm-0">
                                             <input type="text" class="form-control form-control-user" id="email" name="email" placeholder="Adresse Email">
                                             <small style="color: #ff1300 !important">
@@ -246,26 +284,26 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                              <div class="col-sm-6 mb-1 mt-2 mb-sm-0 ">
-                                <input type="password " class="form-control form-control-user " id="motDePasse " name="motDePasse " placeholder="Mot de passe ">
-                                <small style="color: #ff1300 !important ">
+                                        <div class="col-sm-6 mb-1 mt-2 mb-sm-0 ">
+                                            <input type="password" class="form-control form-control-user" id="motDePasse" name="motDePasse" placeholder="Mot de passe">
+                                            <small style="color: #ff1300 !important ">
                                     <span class="align-items-center text-center "></span>
                                 </small>
-                              </div>
-                              <div class="col-sm-6 mt-2 ">
-                                <input type="password " class="form-control form-control-user " id="confMotDePasse " name="confMotDePasse " placeholder="confirmez le mot de passe ">
-                                <small style="color: #ff1300 !important ">
+                                        </div>
+                                        <div class="col-sm-6 mt-2 ">
+                                            <input type="password" class="form-control form-control-user" id="confMotDePasse" name="confMotDePasse" placeholder="confirmez le mot de passe">
+                                            <small style="color: #ff1300 !important ">
                                     <span class="align-items-center text-center "></span>
-                                </small> 
-                             </div>
+                                </small>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="form-group ">
+                                            <input type="submit " name="insert " id="insert " value="Enrégistrer " class="btn btn-warning btn-block ">
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
-                            <div>
-                                <div class="form-group ">
-                                    <input type="submit " name="insert " id="insert " value="Enrégister " class="btn btn-warning btn-block ">
-                                </div>
-                            </div>
-                        </form>
-                    </div>
                         </div>
                     </div>
                 </div>
@@ -275,8 +313,6 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
         <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js " integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n " crossorigin="anonymous "></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js " integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo " crossorigin="anonymous "></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js " integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6 " crossorigin="anonymous "></script>
-        <script type="text/javascript " src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js "></script>
-        <script type="text/javascript " src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js "></script>
         
         <script type="text/javascript ">
             ! function(t) {
@@ -309,28 +345,6 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                             o.preventDefault()
                     })
             }(jQuery);
-        </script>
-        <script type="text/javascript " language="javascript ">
-            ;(function($) {
-                $(document).ready(function(){
-                    var dataTable = $('#user_data').DataTable({
-                        "processing ":true,
-                        "serverSide ":true,
-                        "order ":[],
-                        "ajax ":{
-                            url:"../php/fetch.php ",
-                            type:"POST "
-                        },
-                        "columnDefs ":[
-                            {
-                                "targets ":[0, 3, 4],
-                                "orderable ":false,
-                            },
-                        ],
-        
-                    });
-                });
-            })(jQuery);
         </script>
     </body>
 

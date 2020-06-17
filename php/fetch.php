@@ -41,11 +41,11 @@
 		$sub_array[] = $image;
 		$sub_array[] = $row["nom"];
 		$sub_array[] = $row["prenom"];
-		$sub_array[] = $row["email"];
 		$sub_array[] = $row["contact"];
+		$sub_array[] = $row["email"];
         $sub_array[] = '<a href="#" title="Voir les détails" name="see" id="'.$row["id"].'" class="text-success"><i class="fa fa-info-circle fa-lg"></i></a>&nbsp;&nbsp;';
-        $sub_array[] = '<a href="#" title="Voir les détails" name="update" id="'.$row["id"].'" class="text-success"><i class="fa fa-edit fa-lg"></i></a>&nbsp;&nbsp;';
-        $sub_array[] = '<a href="#" title="Voir les détails" name="delete" id="'.$row["id"].'" class="text-success"><i class="fa fa-trash fa-lg"></i></a>&nbsp;&nbsp;';
+        $sub_array[] = '<a href="#" title="mise à jour" name="update" id="'.$row["id"].'" class="text-success"><i class="fa fa-edit fa-lg"></i></a>&nbsp;&nbsp;';
+        $sub_array[] = '<a href="#" title="supprimer" name="delete" id="'.$row["id"].'" class="text-success"><i class="fa fa-trash fa-lg"></i></a>&nbsp;&nbsp;';
 		$data[] = $sub_array;
 	}
 	$output = array(

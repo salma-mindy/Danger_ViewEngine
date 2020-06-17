@@ -134,7 +134,7 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                     </small>
                   </div>
                   <div class="col-sm-4 mb-3 mb-sm-0">
-                    <input type="text" class="form-control form-control-user" id="source" name="source" placeholder="Veillez indiquez la Source">
+                    <input type="text" class="form-control form-control-user" id="source" name="source" placeholder="Veuillez indiquer la Source">
                     <small style="color: #ff1300 !important">
                         <span class="align-items-center text-center">
                             
@@ -175,7 +175,7 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                     </small> 
                  </div>
                   <div class="col-sm-4">
-                    <input type="text" class="form-control form-control-user" id="date" name="date" placeholder="Indiquez la date">
+                    <input type="text" class="form-control form-control-user" id="pays" name="pays" placeholder="Pays">
                     <small style="color: #ff1300 !important">
                         <span class="align-items-center text-center">
                           
@@ -185,7 +185,7 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                 </div>
                 <div class="form-group row ">
                   <div class="col-sm-4 mb-3 mt-2 mb-sm-0">
-                    <input type="password" class="form-control form-control-user" id="longitude" name="longitude" placeholder="Longitude">
+                    <input type="text" class="form-control form-control-user" id="ville" name="idVille" placeholder="Ville">
                     <small style="color: #ff1300 !important">
                         <span class="align-items-center text-center">
                            
@@ -193,7 +193,7 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                     </small>
                   </div>
                   <div class="col-sm-4 mt-2">
-                    <input type="password" class="form-control form-control-user" id="latitude" name="latitude" placeholder="Latitude">
+                    <input type="text" class="form-control form-control-user" id="longitude" name="longitude" placeholder="Longitude">
                     <small style="color: #ff1300 !important">
                         <span class="align-items-center text-center">
                             
@@ -201,7 +201,7 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                     </small> 
                  </div>
                  <div class="col-sm-4 mt-2">
-                    <input type="password" class="form-control form-control-user" id="ville" name="idVille" placeholder="Ville">
+                    <input type="text" class="form-control form-control-user" id="latitude" name="latitude" placeholder="Latitude">
                     <small style="color: #ff1300 !important">
                         <span class="align-items-center text-center">
                         
@@ -216,14 +216,16 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                 <div class="form-group row ">
                   <div class="col-sm-4 mb-3 mb-sm-0">
                     <input type="text" class="form-control form-control-user" id="intitule" name="intitule" placeholder="Type d'acteur">
+                           
                     <small style="color: #ff1300 !important">
                         <span class="align-items-center text-center">
-                            
                         </span>
                     </small>
                   </div>
+                  
                   <div class="col-sm-4 mb-3 mb-sm-0">
-                    <input type="text" class="form-control form-control-user" id="description" name="description" placeholder="Décrivez l'endroit">
+                    <input type="text" class="form-control form-control-user" id="victimes" name="victimes" placeholder="Sexe Victimes">
+                  
                     <small style="color: #ff1300 !important">
                         <span class="align-items-center text-center">
                            
@@ -231,8 +233,9 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                     </small> 
                  </div>
                   <div class="col-sm-4">
-                    <input type="text" class="form-control form-control-user" id="date" name="date" placeholder="Indiquez la date">
-                    <small style="color: #ff1300 !important">
+                    <input type="text" class="form-control form-control-user" id="sexe" name="sexe" placeholder="Sexe Responsables">
+                           
+                             <small style="color: #ff1300 !important">
                         <span class="align-items-center text-center">
                             
                         </span>

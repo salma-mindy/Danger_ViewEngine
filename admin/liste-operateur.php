@@ -19,6 +19,9 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
         <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css">
         <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <script src="../include/jquery-3.5.1.min.js"></script>
+        <script src='../include/bootbox.min.js' type='text/javascript'></script>
+        <script src='../include/delete-jquery.js' type='text/javascript'></script>
         <link rel="icon" type="image/png" href="../img/logo1.png" />
     </head>
 
@@ -118,77 +121,114 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                                         <h4 class="mt-2 text-white">Tous les opérateurs</h4>
                                     </div>
                                     <div class="col-lg-6">
-                                        <button type="button" class="btn btn-warning m-1 float-right" style="background: #ffc500!important; color:#fff;" data-toggle="modal" data-target="#modalAjout">
+                                        <a href="ajouter-operateur.php">
+                                        <button type="button" class="btn btn-warning m-1 float-right" style="background: #ffc500!important; color:#fff;">
                                             <i class="fa fa-user-plus fa-lg"></i>
                                             &nbsp;&nbsp; Ajouter
                                         </button>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
                             <?php
                                 require_once '../php/db.php';
-                                $sql = "SELECT utilisateurs.id,utilisateurs.nom,utilisateurs.prenom,utilisateurs.email,utilisateurs.contact FROM utilisateurs LEFT JOIN roles ON roles.id=utilisateurs.idRole WHERE roles.intituleRole = 'ROLE_OPERATEUR'";
-                                $query = $db->prepare($sql);
                                 
+                                $limit = 2;
+                                $query = "SELECT count(*) FROM utilisateurs";
+
+                                $s = $db->query($query);
+                                $total_results = $s->fetchColumn();
+                                $total_pages = ceil($total_results/$limit);
+
+                                if (!isset($_GET['page'])) {
+                                    $page = 1;
+                                } else{
+                                    $page = $_GET['page'];
+                                }
+
+                                $starting_limit = ($page-1)*$limit;
+
+                                $sql = "SELECT utilisateurs.id,utilisateurs.nom,utilisateurs.prenom,utilisateurs.contact,utilisateurs.email,utilisateurs.adresse FROM utilisateurs LEFT JOIN roles ON roles.id=utilisateurs.idRole WHERE roles.intituleRole = 'ROLE_OPERATEUR' ORDER BY id DESC LIMIT {$starting_limit},{$limit}";
+                                $query = $db->prepare($sql);
                                 $query->execute();
-
-                                $results = $query->fetchAll();
+                                $data = $query->fetchAll();
+                                //var_dump($data);exit();
                             ?>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <div class="table-responsive">
-                                            <table id="user_data" class="table table-striped table-sm table-bordered" style="color: #fff;">
-                                                <thead>
-                                                    <tr class="text-center">
-                                                        <th>Id</th>
-                                                        <th>Nom</th>
-                                                        <th>Prénom</th>
-                                                        <th>Email</th>
-                                                        <th>Téléphone</th>
-                                                        <th>Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    
-                                                    <tbody class="text-center text-secondary">
-                                                        <?php foreach($results as $result): ?>
-                                                        <tr>
-                                                            <td>
-                                                                <?= $result["id"]; ?>
-                                                            </td>
-                                                            <td>
-                                                                <?= $result["nom"]; ?>
-                                                            </td>
-                                                            <td>
-                                                                <?=  $result["prenom"]; ?>
-                                                            </td>
-                                                            <td>
-                                                                <?=  $result["email"]; ?>
-                                                            </td>
-                                                            <td>
-                                                                <?=  $result["contact"]; ?>
-                                                            </td>
-                                                            <td>
-                                                                <a href="" class="text-success">
-                                                                    <i class="fa fa-info-circle fa-lg"></i>
-                                                                </a>&nbsp;&nbsp;
-                                                                <a href="" class="text-primary">
-                                                                    <i class="fa fa-edit fa-lg"></i>
-                                                                </a>&nbsp;&nbsp;
-                                                                <a href="" class="text-danger">
-                                                                    <i class="fa fa-trash fa-lg"></i>
-                                                                </a>&nbsp;&nbsp;
-                                                            </td>
-
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="table-responsive">
+                                                <table id="user_data" class="table table-striped table-sm table-bordered" style="color: #fff;">
+                                                    <thead>
+                                                        <tr class="text-center">
+                                                            <th>Id</th>
+                                                            <th>Nom</th>
+                                                            <th>Prénom</th>
+                                                            <th>Email</th>
+                                                            <th>Téléphone</th>
+                                                            <th>Actions</th>
                                                         </tr>
-                                                        <?php endforeach; ?>
-                                                    </tbody>
-                                            </table>
+                                                    </thead>
+                                                    <tbody>
+
+                                                        <tbody class="text-center text-secondary">
+                                                            <?php  foreach($data as $results): ?>
+                                                            <tr>
+                                                                <td>
+                                                                    <?= $results['id']; ?>
+                                                                </td>
+                                                                <td>
+                                                                    <?= $results["nom"]; ?>
+                                                                </td>
+                                                                <td>
+                                                                    <?=  $results["prenom"]; ?>
+                                                                </td>
+                                                                <td>
+                                                                    <?=  $results["email"]; ?>
+                                                                </td>
+                                                                <td>
+                                                                    <?=  $results["contact"]; ?>
+                                                                </td>
+                                                                <td>
+                                                                    <a href="mettre-operateur-jour.php?id=<?php echo htmlentities($results["id"]); ?>" type="button" class="text-primary">
+                                                                        <i class="fa fa-edit fa-lg"></i>
+                                                                    </a>&nbsp;&nbsp;
+                                                                    <a class="delete text-danger" id='del_<?= $results["id"] ?>' data-id='<?= $results["id"] ?>'>
+                                                                        <i class="fa fa-trash fa-lg"></i>
+                                                                    </a>&nbsp;&nbsp;
+                                                                </td>
+                                                            </tr>
+                                                            <?php endforeach; ?>
+                                                        </tbody>
+                                                </table>
+
+                                                <nav aria-label="pagination">
+                                                    
+                                                    <ul class="pagination justify-content-center">
+
+                                                       <!--  <li class="page-item">
+                                                            <a class="page-link" href="" aria-label="Previous">
+                                                            <span aria-hidden="true">&laquo;</span>
+                                                            <span class="sr-only">Previous</span>
+                                                            </a>
+                                                        </li> -->
+
+                                                        <?php for ($page=1; $page <= $total_pages ; $page++): ?>
+                                                            <li class="page-item"><a class="page-link active" href="<?php echo "?page=$page"; ?>"><?php  echo $page; ?></a></li>
+                                                        <?php endfor; ?>
+                                                       <!--  <li class="page-item">
+                                                            <a class="page-link" href="" aria-label="Next">
+                                                            <span aria-hidden="true">&raquo;</span>
+                                                            <span class="sr-only">Next</span>
+                                                            </a>
+                                                        </li> -->
+
+                                                    </ul>
+                                                </nav>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
                         </div>
                     </div>
                     <!-- /Contenue de la page -->
@@ -217,103 +257,38 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
             <i class="fa fa-angle-up"></i>
         </a>
 
-        <!-- Ajouter un utilisateur -->
-        <div class="modal fade" id="modalAjout">
-            <div class="modal-dialog modal-dialog-centered">
+        <div class="modal fade" id="">
+            <div class="modal-dialog modal-dialog-top" style="color: #fff !important">
                 <div class="modal-content">
                     <div class="card" style="border-radius: 2px;">
-                        <div class="card-header" style="background: #a19e9e !important">
-                            <!-- Modal Header -->
+                        <div class="" style="background: #a19e9e !important">
                             <div class="modal-header">
-                                <h4 class="modal-title">Ajouter un Opérateur</h4>
-                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title" >Confirmer la suppression</h4>
+                                <button type="button" class="close" style="color: #ff1300 !important" data-dismiss="modal">&times;</button>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <!-- Modal body -->
-                            <div class="modal-body px-4">
-                                <form action="" method="post">
-                                    <div class="">
-                                        <h5 style="color: #ffc500">Informations personnelle</h5>
-                                    </div>
-                                    <hr>
-                                    <div class="form-group row">
-                                        <div class="col-sm-6 mb-2 mb-sm-0">
-                                            <input type="text" class="form-control form-control-user" id="nom" name="nom" placeholder="Nom">
-                                            <small style="color: #ff1300 !important">
-                                    <span class="align-items-center text-center"></span>
-                                </small>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <input type="text" class="form-control form-control-user" id="prenom" name="prenom" placeholder="Prénom">
-                                            <small style="color: #ff1300 !important">
-                                    <span class="align-items-center text-center"></span>
-                                </small>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <div class="col-sm-3 mb-3 mb-sm-0 ">
-                                            <input type="text " class="form-control form-control-user " id="genre " name="genre " placeholder="Genre ">
-                                            <small style="color: #ff1300 !important ">
-                                    <span class="align-items-center text-center "></span>
-                                </small>
-                                        </div>
-                                        <div class="col-sm-4 mb-3 mb-sm-0 ">
-                                            <input type="text " class="form-control form-control-user " id="adresse " name="adresse " placeholder="Lieu de résidence ">
-                                            <small style="color: #ff1300 !important ">
-                                    <span class="align-items-center text-center "></span>
-                                </small>
-                                        </div>
-                                        <div class="col-sm-5 ">
-                                            <input type="text " class="form-control form-control-user " id="contact " name="contact " placeholder="Numéro Téléphone ">
-                                            <small style="color: #ff1300 !important ">
-                                    <span class="align-items-center text-center "></span>
-                                </small>
-                                        </div>
-                                    </div>
-                                    <div class="mt-3 ">
-                                        <h5 style="color: #ffc500 ">Identifiants de connexion</h5>
-                                    </div>
-                                    <hr>
-                                    <div class="form-group row">
-                                        <div class="col-sm-6 mb-3 mt-2 mb-sm-0">
-                                            <input type="text" class="form-control form-control-user" id="email" name="email" placeholder="Adresse Email">
-                                            <small style="color: #ff1300 !important">
-                                    <span class="align-items-center text-center"></span>
-                                </small>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <div class="col-sm-6 mb-1 mt-2 mb-sm-0 ">
-                                            <input type="password" class="form-control form-control-user" id="motDePasse" name="motDePasse" placeholder="Mot de passe">
-                                            <small style="color: #ff1300 !important ">
-                                    <span class="align-items-center text-center "></span>
-                                </small>
-                                        </div>
-                                        <div class="col-sm-6 mt-2 ">
-                                            <input type="password" class="form-control form-control-user" id="confMotDePasse" name="confMotDePasse" placeholder="confirmez le mot de passe">
-                                            <small style="color: #ff1300 !important ">
-                                    <span class="align-items-center text-center "></span>
-                                </small>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="form-group ">
-                                            <input type="submit " name="insert " id="insert " value="Enrégistrer " class="btn btn-warning btn-block ">
-                                        </div>
-                                    </div>
-                                </form>
+                        <form action="delete-op.php" method="post">
+                            <div class="">
+                                <div class="modal-body">
+                                    <p class="text-center">
+                                      Vous êtes sur le point de supprimer l'opérateur : <strong style="color: #ffc500;"><?= $results['nom']; ?></strong>, Voulez-vous continuer?
+                                    </p>
+                                </div>
+                                <div class="modal-footer align-items-center">
+                                    <button type="button" class="btn btn-warning" style="color: #ff1300 !important" data-dismiss="modal">Non, annuler</button>
+                                    <input type="hidden" name="delete_id" value="<?php echo $results['id']; ?>">
+                                    <button type="submit" name="delete_btn" class="btn btn-danger" style="color: #ff1300;"> Oui, supprimer</button>
+                                </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js " integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n " crossorigin="anonymous "></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js " integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo " crossorigin="anonymous "></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js " integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6 " crossorigin="anonymous "></script>
-        
+                                                        
         <script type="text/javascript ">
             ! function(t) {
                 "use strict ";

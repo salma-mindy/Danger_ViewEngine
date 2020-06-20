@@ -21,6 +21,9 @@ require_once "../php/db.php";
         <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css">
         <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <script src="../include/jquery-3.5.1.min.js"></script>
+        <script src='../include/bootbox.min.js' type='text/javascript'></script>
+        <script src='../include/delete-jq-danger.js' type='text/javascript'></script>
         <link rel="icon" type="image/png" href="../img/logo1.png" />
     </head>
 
@@ -125,40 +128,129 @@ require_once "../php/db.php";
                                         <h4 class="mt-2 text-white">Les danger que vous avez ajouter</h4>
                                     </div>
                                     <div class="col-lg-6">
-                                        <button type="button" class="btn btn-danger m-1 float-right" style="background: #ff1300!important; color:#fff;" data-toggle="modal" data-target="#modalAjout">
-                                          <i class="fa fa-user-plus fa-lg"></i>
-                                          &nbsp;&nbsp; Ajouter
-                                      </button>
+                                        <a href="ajouter-danger.php">
+                                            <button type="button" class="btn btn-danger m-1 float-right" style="background: #ff1300!important; color:#fff;">
+                                                <i class="fa fa-plus-square fa-lg"></i>
+                                                &nbsp;&nbsp; Ajouter un danger
+                                            </button>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <div class="table-responsive">
-                                            <table id="user_data" class="table table-striped table-sm table-bordered" style="color: #fff;">
-                                                <thead>
-                                                    <tr class="text-center">
-                                                        <th>Numero d'ordre</th>
-                                                        <th>Déscription</th>
-                                                        <th>Victimes</th>
-                                                        <th>Lieu</th>
-                                                        <th>Date</th>
-                                                        <th>Actions</th>
-                                                    </tr>
-                                                </thead>
-                                            </table>
+                            <?php
+                                require_once '../php/db.php';
+                                $idUser = $_SESSION["id"];
+                                $limit = 2;
+                                $query = "SELECT count(*) FROM danger WHERE idUtilisateur={$idUser}";
+
+                                $s = $db->query($query);
+                                $total_results = $s->fetchColumn();
+                                $total_pages = ceil($total_results/$limit);
+
+                                if (!isset($_GET['page'])) {
+                                    $page = 1;
+                                } else{
+                                    $page = $_GET['page'];
+                                }
+
+                                $starting_limit = ($page-1)*$limit;
+
+                                $sql = "SELECT * FROM danger WHERE idUtilisateur={$idUser}";
+                                $query = $db->prepare($sql);
+                                $query->execute();
+                                $data = $query->fetchAll();
+                                //var_dump($data);exit();
+                            ?>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="table-responsive">
+                                                <table id="user_data" class="table table-striped table-sm table-bordered" style="color: #fff;">
+                                                    <thead>
+                                                        <tr class="text-center">
+                                                            <th>Id</th>
+                                                            <th>Numero d'ordre</th>
+                                                            <th>Source</th>
+                                                            <th>Sexe victime</th>
+                                                            <th>Sexe responsable</th>
+                                                            <th>Type de danger</th>
+                                                            <th>Lieu</th>
+                                                            <th>Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+
+                                                        <tbody class="text-center text-secondary">
+                                                            <?php  foreach($data as $results): ?>
+                                                            <tr>
+                                                                <td>
+                                                                    <?= $results['id']; ?>
+                                                                </td>
+                                                                <td>
+                                                                    <?= $results["numeroOrdre"]; ?>
+                                                                </td>
+                                                                <td>
+                                                                    <?=  $results["source"]; ?>
+                                                                </td>
+                                                                <td>
+                                                                    <?=  $results["sexeVictime"]; ?>
+                                                                </td>
+                                                                <td>
+                                                                    <?=  $results["sexeResponsable"]; ?>
+                                                                </td>
+                                                                <td>
+                                                                    <?=  $results["dangerType"]; ?>
+                                                                </td>
+                                                                <td>
+                                                                    <?=  $results["ville"]; ?>
+                                                                </td>
+                                                                <td>
+                                                                    <a href="mettre-danger-a-jour.php?id=<?php echo htmlentities($results["id"]); ?>" type="button" class="text-primary">
+                                                                        <i class="fa fa-edit fa-lg"></i>
+                                                                    </a>&nbsp;&nbsp;
+                                                                    <a class="delete text-danger" id='del_<?= $results["id"] ?>' data-id='<?= $results["id"] ?>'>
+                                                                        <i class="fa fa-trash fa-lg"></i>
+                                                                    </a>&nbsp;&nbsp;
+                                                                </td>
+                                                            </tr>
+                                                            <?php endforeach; ?>
+                                                        </tbody>
+                                                </table>
+
+                                                <nav aria-label="pagination">
+                                                    
+                                                    <ul class="pagination justify-content-center">
+
+                                                       <!--  <li class="page-item">
+                                                            <a class="page-link" href="" aria-label="Previous">
+                                                            <span aria-hidden="true">&laquo;</span>
+                                                            <span class="sr-only">Previous</span>
+                                                            </a>
+                                                        </li> -->
+
+                                                        <?php for ($page=1; $page <= $total_pages ; $page++): ?>
+                                                            <li class="page-item"><a class="page-link active" href="<?php echo "?page=$page"; ?>"><?php  echo $page; ?></a></li>
+                                                        <?php endfor; ?>
+                                                       <!--  <li class="page-item">
+                                                            <a class="page-link" href="" aria-label="Next">
+                                                            <span aria-hidden="true">&raquo;</span>
+                                                            <span class="sr-only">Next</span>
+                                                            </a>
+                                                        </li> -->
+
+                                                    </ul>
+                                                </nav>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
                         </div>
                     </div>
                     <!-- /Contenue de la page -->
 
                     <!-- Footer -->
-                    <footer class="sticky-footer bg-white mt-4" style="background: #ffc500 !important;">
+                    <footer class="sticky-footer bg-white" style="background: #ffc500 !important;">
                         <div class="container">
                             <div class="copyright text-center">
                                 <span>Copyright &copy; 2020, design by Sheila Melissa</span>
@@ -178,30 +270,9 @@ require_once "../php/db.php";
                 <i class="fa fa-angle-up"></i>
             </a>
 
-            <!-- Ajouter un utilisateur -->
-            <div class="modal fade" id="modalAjout">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="card" style="border-radius: 2px;">
-                            <div class="card-header" style="background: #a19e9e !important">
-                                <!-- Modal Header -->
-                                <div class="modal-header">
-                                    <h4 class="modal-title">Ajouter un Opérateur</h4>
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <!-- Modal body -->
-                                <div class="modal-body px-4">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
 
             <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-            <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
             <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
             <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
             <script type="text/javascript " src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js "></script>
@@ -239,24 +310,3 @@ require_once "../php/db.php";
                 }(jQuery);
             </script>
     </body>
-
-    <script type="text/javascript " language="javascript ">
-                ;(function($) {
-                    $(document).ready(function() {
-                        var dataTable = $('#user_data').DataTable({
-                            "processing ": true,
-                            "serverSide ": true,
-                            "order ": [],
-                            "ajax ": {
-                                url: "../php/fetch.php ",
-                                type: "POST "
-                            },
-                            "columnDefs ": [{
-                                "targets ": [0, 3, 4],
-                                "orderable ": false,
-                            }, ],
-
-                        });
-                    });
-                })(jQuery);
-            </script>

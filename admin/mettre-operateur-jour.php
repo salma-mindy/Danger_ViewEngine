@@ -1,151 +1,44 @@
 <?php
 // Initialize the session
 session_start();
- 
-// Vérifions si l'utilisateur est connecté, sinon redirigeons-le vers la page de connexion
-if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
-    header("location: ../index.php");
-    exit;
-}
 
-require_once "../php/db.php";
- 
-$nom = $prenom = $genre = $adresse = $contact = $email = $motDePasse = $confMotDePasse = "";
-$nom_err = $prenom_err = $genre_err = $adresse_err = $contact_err = $email_err = $motDePasse_err = $confMotDePasse_err = "";
+
+$nom = $prenom = $genre = $adresse = $contact = "";
+$nom_err = $prenom_err = $genre_err = $adresse_err = $contact_err = ""; 
 $errorMsg = "";
 
-if($_SERVER["REQUEST_METHOD"] == "POST"){
-    // validation du nom
-    if (empty($_POST["nom"])) {
-        $nom_err = "Le nom est obligatoire";
-      } else {
-        $nom = trim($_POST["nom"]);
-      }
-    // validation prenom
-      if (empty($_POST["prenom"])) {
-        $prenom_err = "Le prénom est obligatoire";
-      } else {
-        $prenom = trim($_POST["prenom"]);
-      }
-    // validation genre
-      if (empty($_POST["genre"])) {
-        $genre_err = "Le Genre est obligatoire";
-      } else {
-        $genre = trim($_POST["genre"]);
-      }
-    
-    // validation lieu de residence
-      if (empty($_POST["adresse"])) {
-        $adresse_err = "Le Lieu de Résidence est obligatoire";
-      } else {
-        $adresse = trim($_POST["adresse"]);
-      }
-    // validation Télephone
-    if (empty($_POST["contact"])) {
-        $contact_err = "Le Numéro de téléphone est oblidatoire";
-      } else {
-        $contact = trim($_POST["contact"]);
-      }
+require_once "../php/db.php";
+if(isset($_POST['update']))
+{
 
-    // validation de email
-    if(empty(trim($_POST["email"]))){
-        $email_err = "Veuillez saisir un e-mail.";
-    } else{
-        $email = trim($_POST["email"]);
+    $userid= isset($_POST["id"]) ? $_POST["id"] : '';
 
-        if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
-            $email_err = "$email, n'est pas une adresse email valide";
-        }else{
-            $sql = "SELECT id FROM utilisateurs WHERE email = :email";
+    //var_dump($userid);exit();
+    $nom = trim($_POST["nom"]);
+    $prenom = trim($_POST["prenom"]);
+    $genre = trim($_POST["genre"]);
+    $adresse = trim($_POST["adresse"]);
+    $contact = trim($_POST["contact"]);
+
+    $sql = "UPDATE utilisateurs SET nom=:nom,prenom=:prenom,genre=:genre,adresse=:adresse,contact=:contact WHERE id=:uid";
         
-            if($stmt = $db->prepare($sql)){
-                $stmt->bindParam(":email", $param_email, PDO::PARAM_STR);
-                $param_email = trim($_POST["email"]);
-                if($stmt->execute()){
-                    if($stmt->rowCount() == 1){
-                        $email_err = "Cet e-mail est déjà associé à un compte.";
-                    } else{
-                        $email = trim($_POST["email"]);
-                    }
-                } else{
-                    $errorMsg = "Oops! Quelque chose a mal tourné. Veuillez réessayer plus tard.";
-                }
-                unset($stmt);
-            }
-        }
-    }
-    
-    // Validate mot de passe
-    if(empty(trim($_POST["motDePasse"]))){
-        $motDePasse_err = "Veuillez entrer un mot de passe.";     
-    } elseif(strlen(trim($_POST["motDePasse"])) < 6){
-        $motDePasse_err = "Le mot de passe doit contenir au moins 6 caractères.";
-    } else{
-        $motDePasse = trim($_POST["motDePasse"]);
-    }
-    
-    // Validate confirmation mot de passe
-    if(empty(trim($_POST["confMotDePasse"]))){
-        $confMotDePasse_err = "Veuillez confirmer le mot de passe.";     
-    } else{
-        $confMotDePasse = trim($_POST["confMotDePasse"]);
-        if(empty($confMotDePasse_err) && ($motDePasse != $confMotDePasse)){
-            $confMotDePasse_err = "Les mots de passe ne correspondent pas.";
-        }
-    }
-    
-    // Vérification des erreurs de saisie avant l'insertion dans la base de données
-    if(empty($nom_err) && 
-       empty($prenom_err) && 
-       empty($genre_err) && 
-       empty($adresse_err) &&
-       empty($contact_err) &&
-       empty($email_err) &&
-       empty($motDePasse_err) &&
-       empty($confMotDePasse_err)){
-        
-        // Préparons une instruction d'insertion
-        $sql = "INSERT INTO utilisateurs (nom, prenom, genre, adresse, contact, email, motDePasse, idRole) 
-                VALUES (:nom, :prenom, :genre, :adresse, :contact, :email, :motDePasse, 2)";
-         
-        if($stmt = $db->prepare($sql)){
-            // Bind variables to the prepared statement as parameters
-            $stmt->bindParam(":nom", $param_nom, PDO::PARAM_STR);
-            $stmt->bindParam(":prenom", $param_prenom, PDO::PARAM_STR);
-            $stmt->bindParam(":genre", $param_genre, PDO::PARAM_STR);
-            $stmt->bindParam(":adresse", $param_adresse, PDO::PARAM_STR);
-            $stmt->bindParam(":contact", $param_contact, PDO::PARAM_STR);
-            $stmt->bindParam(":email", $param_email, PDO::PARAM_STR);
-            $stmt->bindParam(":motDePasse", $param_motDePasse, PDO::PARAM_STR);
-            
-            // Set parameters
-            $param_nom = $nom;
-            $param_prenom = $prenom;
-            $param_genre = $genre;
-            $param_adresse = $adresse;
-            $param_contact = $contact;
-            $param_email = $email;
-            $param_motDePasse = password_hash($motDePasse, PASSWORD_DEFAULT); // Creates a password hash
-            
-            // Attempt to execute the prepared statement
-            if($stmt->execute()){
-                $nomOp = $_POST["nom"];
-                $emailOp = $_POST["email"];
-                $pass = $_POST["motDePasse"];
-                //$errorMsg  = "Opérateur <b>$nomOp</b> ajouté avec succès. Ces identifiants de connexion sont : <br> <b>Email:</b> $emailOp <br> <b>Mot de passe (à changer avant 24h):</b> $pass";
-                $errorMsg = "success";
-                
-            } else{
-                $errorMsg = "error";
-            }
+    $stmt = $db->prepare($sql);
+    // Bind variables to the prepared statement as parameters
+    $stmt->bindParam(":nom", $nom, PDO::PARAM_STR);
+    $stmt->bindParam(":prenom", $prenom, PDO::PARAM_STR);
+    $stmt->bindParam(":genre", $genre, PDO::PARAM_STR);
+    $stmt->bindParam(":adresse", $adresse, PDO::PARAM_STR);
+    $stmt->bindParam(":contact", $contact, PDO::PARAM_STR);
+    $stmt->bindParam(":uid", $userid, PDO::PARAM_STR);
 
-            // Close statement
-            unset($stmt);
-        }
+    if($stmt->execute()){
+        $errorMsg = "success";
+        header("location: liste-operateur.php");
+    }else{
+        $errorMsg = "error";
     }
+
     
-    // Close connection
-    unset($db);
 }
 ?>
 <!DOCTYPE html>
@@ -155,11 +48,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Danger View - Admin | Ajouter</title>
+    <title>Danger View - Admin | Mise à jour</title>
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <script src="../include/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script> -->
     <?php 
         if($errorMsg === "success"){
             echo '<script type="text/javascript">
@@ -207,6 +99,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     ?>
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link rel="icon" type="image/png" href="../img/logo1.png" />
+    
 </head>
 
 <body id="page-top">
@@ -298,6 +191,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
                 <!-- Contenue de la page -->
                 <div class="container-fluid">
+                    <?php if($errorMsg != ""): ?>
+                        <div class="alert alert-success" role="alert">
+                            <?php echo $errorMsg; ?>
+                        </div>
+                    <?php endif ?>
                     <div class="card mb-4">
                         <h5 class=" h4 card-header" style="background: #a19e9e !important">
                             <center>Ajouter un opérateur</center>
@@ -306,6 +204,17 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         <div class="row">
           <div class="col-lg-12">
             <div class="p-1">
+            <?php 
+             $userid= intval($_GET["id"]);
+            
+             $query = "SELECT nom,prenom,genre,adresse,contact,id FROM utilisateurs WHERE id=:uid";
+             $traitement = $db->prepare($query);
+             $traitement->bindParam(':uid', $userid, PDO::PARAM_STR);
+             $traitement->execute();
+             $data = $traitement->fetchAll();
+            ?>
+             <?php if($traitement->rowCount() > 0): ?>
+                <?php foreach($data as $result): ?>
               <form method="post" class="user" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
                 <div class="">
                     <h5 style="color: #ffc500">Informations personnelle</h5>
@@ -313,7 +222,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 <hr>
                 <div class="form-group row <?php echo (!empty($nom_err) && !empty($prenom_err)) ? 'has-error' : ''; ?>">
                   <div class="col-sm-6 mb-3 mb-sm-0">
-                    <input type="text" class="form-control form-control-user" id="nom" name="nom" placeholder="Nom">
+                    <input type="text" class="form-control form-control-user" id="nom" name="nom" placeholder="Nom" value="<?= $result['nom'] ?>">
                     <small style="color: #ff1300 !important">
                         <span class="align-items-center text-center">
                             <center>
@@ -323,7 +232,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     </small>
                   </div>
                   <div class="col-sm-6">
-                    <input type="text" class="form-control form-control-user" id="prenom" name="prenom" placeholder="Prénom">
+                    <input type="text" class="form-control form-control-user" id="prenom" name="prenom" placeholder="Prénom" value="<?= $result['prenom'] ?>">
                     <small style="color: #ff1300 !important">
                         <span class="align-items-center text-center">
                             <center>
@@ -335,7 +244,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 </div>
                 <div class="form-group row <?php echo (!empty($genre_err) && !empty($adresse_err) && !empty($contact_err)) ? 'has-error' : ''; ?>"">
                   <div class="col-sm-3 mb-3 mb-sm-0">
-                    <input type="text" class="form-control form-control-user" id="genre" name="genre" placeholder="Genre">
+                    <input type="text" class="form-control form-control-user" id="genre" name="genre" placeholder="Genre" value="<?= $result['genre'] ?>">
                     <small style="color: #ff1300 !important">
                         <span class="align-items-center text-center">
                             <center>
@@ -345,7 +254,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     </small>
                   </div>
                   <div class="col-sm-4 mb-3 mb-sm-0">
-                    <input type="text" class="form-control form-control-user" id="adresse" name="adresse" placeholder="Lieu de résidence">
+                    <input type="text" class="form-control form-control-user" id="adresse" name="adresse" placeholder="Lieu de résidence" value="<?= $result['adresse'] ?>">
                     <small style="color: #ff1300 !important">
                         <span class="align-items-center text-center">
                             <center>
@@ -355,7 +264,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     </small> 
                  </div>
                   <div class="col-sm-5">
-                    <input type="tel" class="form-control form-control-user" id="contact" name="contact" placeholder="Numéro Téléphone">
+                    <input type="tel" class="form-control form-control-user" id="contact" name="contact" placeholder="Numéro Téléphone" value="<?= $result['contact'] ?>">
                     <small style="color: #ff1300 !important">
                         <span class="align-items-center text-center">
                             <center>
@@ -365,48 +274,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     </small>
                   </div>
                 </div>
-                <div class="mt-3">
-                    <h5 style="color: #ffc500">Identifiants de connexion</h5>
-                </div>
-                <hr>
-                <div class="form-group row <?php echo (!empty($email_err)) ? 'has-error' : ''; ?>"">
-                  <div class="col-sm-6 mb-3 mt-2 mb-sm-0">
-                    <input type="text" class="form-control form-control-user" id="email" name="email" placeholder="Adresse Email">
-                    <small style="color: #ff1300 !important">
-                        <span class="align-items-center text-center">
-                            <center>
-                            <i><?php echo $email_err; ?></i>
-                            </center>
-                        </span>
-                    </small>
-                 </div>
-                </div>
-                <div class="form-group row <?php echo (!empty($motDePasse_err) && !empty($confMotDePasse_err)) ? 'has-error' : ''; ?>"">
-                  <div class="col-sm-6 mb-3 mt-2 mb-sm-0">
-                    <input type="password" class="form-control form-control-user" id="motDePasse" name="motDePasse" placeholder="Mot de passe">
-                    <small style="color: #ff1300 !important">
-                        <span class="align-items-center text-center">
-                            <center>
-                            <i><?php echo $motDePasse_err; ?></i>
-                            </center>
-                        </span>
-                    </small>
-                  </div>
-                  <div class="col-sm-6 mt-2">
-                    <input type="password" class="form-control form-control-user" id="confMotDePasse" name="confMotDePasse" placeholder="confirmez le mot de passe">
-                    <small style="color: #ff1300 !important">
-                        <span class="align-items-center text-center">
-                            <center>
-                            <i><?php echo $confMotDePasse_err; ?></i>
-                            </center>
-                        </span>
-                    </small> 
-                 </div>
-                </div>
                 <div>
                     <div class="row">
                         <div class="col-md-3">
-                            <input type="submit" class="btn btn-primary btn-user btn-block" style="background: #ffc500!important; color:#fff;" value="Enregister">
+                        <input type="hidden" name="id" value="<?= $result['id'] ?>">
+                            <input type="submit" class="btn btn-primary btn-user btn-block" style="background: #ffc500!important; color:#fff;" name="update" value="Mettre à jour">
                         </div>
                         <div class="col-md-6">
                         </div>
@@ -414,6 +286,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     </div>
                 </div>
               </form>
+                <?php endforeach ?>
+            <?php endif ?>
             </div>
           </div>
         </div>
@@ -447,7 +321,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     </a>
 
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 

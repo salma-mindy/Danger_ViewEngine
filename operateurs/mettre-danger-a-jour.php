@@ -16,10 +16,11 @@ $ville_err = $longitude_err = $latitude_err = $typeActeur_err = $sexeVictime_err
 $numeroOrdre_err = $description_err = $date_err = $source_err = $Lieu_err = $dangerType_err = $descripendroit_err = $pays_err = "";
 $errorMsg = "";
 
-if($_SERVER["REQUEST_METHOD"] == "POST"){
+if(isset($_POST['update'])){
 
     $idUser = $_SESSION["id"];
-
+    
+    $userid= isset($_POST["id"]) ? $_POST["id"] : '';
     //var_dump($idUser);exit();
     if (empty($_POST["numeroOrdre"])) {
         $numeroOrdre_err = "Le numeroOrdre est obligatoire";
@@ -123,8 +124,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
        empty($sexeResponsable_err)){
         
         // Préparons une instruction d'insertion
-        $sql = "INSERT INTO danger (numeroOrdre, description, date, source, Lieu, dangerType, descripendroit, pays, ville, longitude, latitude, typeActeur, sexeVictime, sexeResponsable, idUtilisateur) 
-                VALUES (:numeroOrdre, :description, :date, :source, :Lieu, :dangerType, :descripendroit, :pays, :ville, :longitude, :latitude, :typeActeur, :sexeVictime, :sexeResponsable, {$idUser})";
+        $sql = "UPDATE danger SET numeroOrdre=:numeroOrdre, description=:description, date=:date, source=:source, Lieu=:Lieu, dangerType=:dangerType, descripendroit=:descripendroit, pays=:pays, ville=:ville, longitude=:longitude, latitude=:latitude, typeActeur=:typeActeur, sexeVictime=:sexeVictime, sexeResponsable=:sexeResponsable, idUtilisateur={$idUser})";
          
         if($stmt = $db->prepare($sql)){
             // Bind variables to the prepared statement as parameters
@@ -160,7 +160,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $param_sexeResponsable = $sexeResponsable;
 
             if($stmt->execute()){
-               $errorMsg = "success";
+                header("location: liste-des-danger-ajouter.php");
+                $errorMsg = "success";
             } else{
                 $errorMsg = "error";
             }
@@ -328,6 +329,18 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         <div class="row">
           <div class="col-lg-12">
             <div class="p-1">
+            <?php 
+            
+             $dangerId= intval($_GET["id"]);
+            
+             $query = "SELECT * FROM danger WHERE id=:uid";
+             $traitement = $db->prepare($query);
+             $traitement->bindParam(':uid', $dangerId, PDO::PARAM_STR);
+             $traitement->execute();
+             $data = $traitement->fetchAll();
+            ?>
+             <?php if($traitement->rowCount() > 0): ?>
+                <?php foreach($data as $result): ?>
               <form method="post" class="user" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
                 <div class="">
                     <h5 style="color: #ffc500">Informations générale</h5>
@@ -335,7 +348,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 <hr>
                 <div class="form-group row ">
                   <div class="col-sm-6 mb-3 mb-sm-0">
-                    <input type="text" class="form-control form-control-user" id="numeroOrdre" name="numeroOrdre" placeholder="Numero d'ordre">
+                    <input type="text" class="form-control form-control-user" id="numeroOrdre" name="numeroOrdre" placeholder="Numero d'ordre" value="<?= $result['numeroOrdre'] ?>">
                     <small style="color: #ff1300 !important">
                         <span class="align-items-center text-center">
                            
@@ -344,7 +357,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                   </div>
                   
                   <div class="col-sm-6 mb-3 mb-sm-0">
-                    <input type="text" class="form-control form-control-user" id="source" name="source" placeholder="Veuillez indiquer la Source">
+                    <input type="text" class="form-control form-control-user" id="source" name="source" placeholder="Veuillez indiquer la Source" value="<?= $result['source'] ?>">
                     <small style="color: #ff1300 !important">
                         <span class="align-items-center text-center">
                             
@@ -355,11 +368,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
                  <div class="form-group row ">
                   <div class="col-sm-6">
-                    <input type="text" class="form-control form-control-user" id="date" name="date" placeholder="Indiquez la date">
+                    <input type="text" class="form-control form-control-user" id="date" name="date" placeholder="Indiquez la date" value="<?= $result['date'] ?>">
                     <small style="color: #ff1300 !important">
-                        <center>
-                            <i><?php echo $date_err; ?></i>
-                        </center>
+                        <span class="align-items-center text-center">
+                        </span>
                     </small>
                   </div>
                   <?php
@@ -371,7 +383,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     $data_td = $query_td->fetchAll();
                 ?>  
                   <div class="col-sm-6">
-                    <input type="text" list=dangertype class="form-control form-control-user" id="dangerType" name="dangerType" placeholder="Type de danger">
+                    <input type="text" list=dangertype class="form-control form-control-user" id="dangerType" name="dangerType" placeholder="Type de danger" value="<?= $result['dangerType'] ?>">
                     <datalist id="dangertype" >
                         <?php  foreach($data_td as $res_td): ?>
                             <option> <?= ucfirst($res_td["intitule"]); ?>
@@ -385,7 +397,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                   </div>
                 
                 <div class="form-group">
-                  <textarea class="form-control " rows="5" id="description" name="description" placeholder="Description..."></textarea>
+                  <textarea class="form-control " rows="5" id="description" name="description" placeholder="Description..." value="<?= $result['description'] ?>"></textarea>
                 </div>
                 <div class="mt-3">
                     <h5 style="color: #ffc500">Description du lieu</h5>
@@ -393,14 +405,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 <hr>
                 <div class="form-group row">
                   <div class="col-sm-4 mb-3 mb-sm-0">
-                    <input type="text" class="form-control form-control-user" id="Lieu" name="Lieu" placeholder="Nom de l'endroit">
+                    <input type="text" class="form-control form-control-user" id="Lieu" name="Lieu" placeholder="Nom de l'endroit" value="<?= $result['Lieu'] ?>">
                     <small style="color: #ff1300 !important">
                         <span class="align-items-center text-center">
                         </span>
                     </small>
                   </div>
                   <div class="col-sm-4 mb-3 mb-sm-0">
-                    <input type="text" class="form-control form-control-user" id="descripendroit" name="descripendroit" placeholder="Décrivez l'endroit">
+                    <input type="text" class="form-control form-control-user" id="descripendroit" name="descripendroit" placeholder="Décrivez l'endroit" value="<?= $result['descripendroit'] ?>">
                     <small style="color: #ff1300 !important">
                         <span class="align-items-center text-center">
                         </span>
@@ -416,7 +428,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     $data_p = $query_p->fetchAll();
                 ?>  
              
-                    <input type="text" list="Pays" class="form-control form-control-user" id="pays" name="pays" placeholder="Pays">
+                    <input type="text" list="Pays" class="form-control form-control-user" id="pays" name="pays" placeholder="Pays" value="<?= $result['pays'] ?>">
                     <datalist id="Pays" >
                         <?php  foreach($data_p as $res_p): ?>
                             <option> <?= ucfirst($res_p["nom"]); ?>
@@ -439,7 +451,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     $data_v = $query_v->fetchAll();
                     ?>  
              
-                    <input type="text" list="vlle" class="form-control form-control-user" id="ville" name="ville" placeholder="Ville">
+                    <input type="text" list="vlle" class="form-control form-control-user" id="ville" name="ville" placeholder="Ville" value="<?= $result['ville'] ?>">
                     <datalist id="vlle" >
                         <?php  foreach($data_v as $res_v): ?>
                             <option> <?= ucfirst($res_v["ville"]); ?>
@@ -451,7 +463,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     </small>
                   </div>
                   <div class="col-sm-4 mt-2">
-                    <input type="text" list="lng" class="form-control form-control-user" id="longitude" name="longitude" placeholder="Longitude">
+                    <input type="text" list="lng" class="form-control form-control-user" id="longitude" name="longitude" placeholder="Longitude" value="<?= $result['longitude'] ?>">
                     <datalist id="lng" >
                         <?php  foreach($data_v as $res_v): ?>
                             <option> <?= ucfirst($res_v["lng"]); ?>
@@ -463,7 +475,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     </small>
                  </div>
                  <div class="col-sm-4 mt-2">
-                    <input type="text" list="lat" class="form-control form-control-user" id="latitude" name="latitude" placeholder="Latitude">
+                    <input type="text" list="lat" class="form-control form-control-user" id="latitude" name="latitude" placeholder="Latitude" value="<?= $result['latitude'] ?>">
                     <datalist id="lat" >
                         <?php  foreach($data_v as $res_v): ?>
                             <option> <?= ucfirst($res_v["lat"]); ?>
@@ -489,7 +501,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     $data_a = $query_a->fetchAll();
                 ?>  
                   <div class="col-sm-4 mb-3 mb-sm-0">
-                    <input type="text" list="persons" class="form-control form-control-user" id="typeActeur" name="typeActeur" placeholder="Type d'acteur">
+                    <input type="text" list="persons" class="form-control form-control-user" id="typeActeur" name="typeActeur" placeholder="Type d'acteur" value="<?= $result['typeActeur'] ?>">
                     <datalist id="persons" >
                         <?php  foreach($data_a as $res_a): ?>
                             <option> <?= ucfirst($res_a["intitule"]); ?>
@@ -502,7 +514,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                   </div>
                   
                   <div class="col-sm-4 mb-3 mb-sm-0">
-                    <input type="text" list="sexe" class="form-control form-control-user" id="sexeVictime" name="sexeVictime" placeholder="Sexe Victimes">
+                    <input type="text" list="sexe" class="form-control form-control-user" id="sexeVictime" name="sexeVictime" placeholder="Sexe Victimes" value="<?= $result['sexeVictime'] ?>">
                     <datalist id="sexe" >
                         <option> Masculin
                         <option> Feminin
@@ -514,7 +526,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     </small> 
                  </div>
                   <div class="col-sm-4">
-                    <input type="text" list=Sresp class="form-control form-control-user" id="sexeResponsable" name="sexeResponsable" placeholder="Sexe Responsables">
+                    <input type="text" list=Sresp class="form-control form-control-user" id="sexeResponsable" name="sexeResponsable" placeholder="Sexe Responsables" value="<?= $result['sexeResponsable'] ?>">
                         <datalist id="Sresp" >
                             <option> Masculin
                             <option> Feminin
@@ -529,7 +541,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 <div>
                     <div class="row">
                         <div class="col-md-3">
-                            <input type="submit" class="btn btn-primary btn-user btn-block" style="background: #ff1300!important; color:#fff;" value="Enregister">
+                            <input type="hidden" name="id" value="<?= $result['id'] ?>">
+                            <input type="submit" class="btn btn-primary btn-user btn-block" style="background: #ff1300!important; color:#fff;" name="update" value="Mettre à jour">
                         </div>
                         <div class="col-md-6">
                         </div>
@@ -537,6 +550,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     </div>
                 </div>
               </form>
+              <?php endforeach ?>
+            <?php endif ?>
             </div>
           </div>
         </div>

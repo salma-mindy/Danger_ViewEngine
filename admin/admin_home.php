@@ -157,26 +157,96 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                         <h6 class="h4 card-header" style="background: #a19e9e !important">
                             <center>Informations enregistrées</center>
                         </h6>
+                        <?php
+                                require_once '../php/db.php';
+                             
+                                $query = "SELECT * FROM danger";
+
+                                $s = $db->prepare($query);
+                                $s->execute();
+                                //var_dump();exit();
+                                $total_results = count($s->fetchAll());
+                                
+                            ?>
                         <div class="card-body">
                             <div class="row">
                                 <div class=" card-text col-md-3 text-center">
                                     <P>
-                                        Total <br> 0
+                                        Total <br> 
+                                        <?php if($total_results === 0): echo 0; ?>
+                                            <?php else: echo $total_results; ?>
+                                        <?php endif ?>
                                     </P> 
                                 </div>
+                                <?php
+                                    require_once '../php/db.php';
+                                    $start = new DateTime("-1 months");
+                                    $end = clone $start;
+                                    $start->modify("first day of this month");
+                                    $end->modify("last day of this month");
+                                    $debutMois = $start->format("Y-m-d");
+                                    $finMois = $end->format("Y-m-d");
+
+                                    //echo $debutMois." - ".$finMois;exit();
+
+                                    $query = "SELECT * FROM danger WHERE dateAjout >= '{$debutMois}' AND dateAjout <= '{$finMois}'";
+                                    $s = $db->prepare($query);
+                                    $s->execute();
+                                    $md_results = count($s->fetchAll());
+                                    //var_dump($md_results);exit();
+                                ?>
                                 <div class=" card-text col-md-3 text-center">
                                     <P>
-                                        Le mois dernier <br>0
+                                        Le mois dernier <br>
+                                        <?php if($md_results === 0): echo 0; ?>
+                                            <?php else: echo $md_results; ?>
+                                        <?php endif ?>
                                     </P>
                                 </div>
+                                <?php
+                                    require_once '../php/db.php';
+
+                                    $previous_week = strtotime("-1 week +1 day");
+
+                                    $start_week = strtotime("last sunday midnight",$previous_week);
+                                    $end_week = strtotime("next saturday",$start_week);
+
+                                    $start_week = date("Y-m-d",$start_week);
+                                    $end_week = date("Y-m-d",$end_week);
+
+                                    //echo $start_week.' '.$end_week;exit();
+                                    $query = "SELECT * FROM danger WHERE dateAjout >= '{$start_week}' AND dateAjout <= '{$end_week}'";
+                                    $s = $db->prepare($query);
+                                    $s->execute();
+                                    $sd_results = count($s->fetchAll());
+                                    //var_dump($sd_results);exit();
+                                ?>
                                 <div class="card-text col-md-3 text-center">
                                     <P>
-                                        La semaine dernière <br>0
+                                        La semaine dernière <br>
+                                        <?php if($sd_results === 0): echo 0; ?>
+                                            <?php else: echo $sd_results; ?>
+                                        <?php endif ?>
                                     </P> 
                                 </div>
+                                <?php
+                                    require_once '../php/db.php';
+
+                                    $date_now = new DateTime('now');
+                                    $data_td = $date_now->format('Y-m-d');
+                                    $query = "SELECT * FROM danger WHERE dateAjout='{$data_td}'";
+                                    $s = $db->prepare($query);
+                                    $s->execute();
+                                    $t_results = count($s->fetchAll());
+                                    //var_dump($t_results);exit();
+                                        
+                                ?>
                                 <div class="card-text col-md-3 text-center">
                                     <P>
-                                        Aujourd'hui<br> 0
+                                        Aujourd'hui<br> 
+                                        <?php if($t_results === 0): echo 0; ?>
+                                            <?php else: echo $t_results; ?>
+                                        <?php endif ?>
                                     </P> 
                                 </div>
                             </div>

@@ -34,10 +34,18 @@ if(isset($_POST['update'])){
         $description = trim($_POST["description"]);
       }
     // validation date
-      if (empty($_POST["date"])) {
+    if (empty($_POST["date"])) {
         $date_err = "Le date est obligatoire";
       } else {
         $date = trim($_POST["date"]);
+        $test_arr  = explode('/', $date);
+        if (count($test_arr) == 3) {
+            if (checkdate($test_arr[0], $test_arr[1], $test_arr[2])) {
+                $date = trim($_POST["date"]);
+            } else {
+                $date_err = "Le format de la date est incorrecte";
+            }
+        }
       }
     
       if (empty($_POST["source"])) {
@@ -371,7 +379,7 @@ if(isset($_POST['update'])){
 
                  <div class="form-group row ">
                   <div class="col-sm-6">
-                    <input type="text" class="form-control form-control-user" id="date" name="date" placeholder="Indiquez la date" value="<?= $result['date'] ?>">
+                    <input type="date" class="form-control form-control-user" id="date" name="date" placeholder="Indiquez la date" value="<?= $result['date'] ?>">
                     <small style="color: #ff1300 !important">
                         <span class="align-items-center text-center">
                         </span>

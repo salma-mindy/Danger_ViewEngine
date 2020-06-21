@@ -37,6 +37,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $date_err = "Le date est obligatoire";
       } else {
         $date = trim($_POST["date"]);
+        $test_arr  = explode('/', $date);
+        if (count($test_arr) == 3) {
+            if (checkdate($test_arr[0], $test_arr[1], $test_arr[2])) {
+                $date = trim($_POST["date"]);
+            } else {
+                $date_err = "Le format de la date est incorrecte";
+            }
+        }
       }
     
       if (empty($_POST["source"])) {
@@ -355,7 +363,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
                  <div class="form-group row ">
                   <div class="col-sm-6">
-                    <input type="text" class="form-control form-control-user" id="date" name="date" placeholder="Indiquez la date">
+                    <input type="date" class="form-control form-control-user" id="date" name="date" placeholder="Indiquez la date">
                     <small style="color: #ff1300 !important">
                         <center>
                             <i><?php echo $date_err; ?></i>
@@ -378,14 +386,20 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         <?php endforeach; ?>
                     </datalist>
                     <small style="color: #ff1300 !important">
-                        <span class="align-items-center text-center">
-                        </span>
+                        <center>
+                            <i><?php echo $dangerType_err; ?></i>
+                        </center>
                     </small>
                   </div>
                   </div>
                 
                 <div class="form-group">
                   <textarea class="form-control " rows="5" id="description" name="description" placeholder="Description..."></textarea>
+                  <small style="color: #ff1300 !important">
+                        <center>
+                            <i><?php echo $description_err; ?></i>
+                        </center>
+                  </small>
                 </div>
                 <div class="mt-3">
                     <h5 style="color: #ffc500">Description du lieu</h5>
@@ -395,15 +409,17 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                   <div class="col-sm-4 mb-3 mb-sm-0">
                     <input type="text" class="form-control form-control-user" id="Lieu" name="Lieu" placeholder="Nom de l'endroit">
                     <small style="color: #ff1300 !important">
-                        <span class="align-items-center text-center">
-                        </span>
+                        <center>
+                            <i><?php echo $Lieu_err; ?></i>
+                        </center>
                     </small>
                   </div>
                   <div class="col-sm-4 mb-3 mb-sm-0">
                     <input type="text" class="form-control form-control-user" id="descripendroit" name="descripendroit" placeholder="Décrivez l'endroit">
                     <small style="color: #ff1300 !important">
-                        <span class="align-items-center text-center">
-                        </span>
+                        <center>
+                            <i><?php echo $descripendroit_err; ?></i>
+                        </center>
                     </small> 
                  </div>
                   <div class="col-sm-4">
@@ -423,8 +439,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         <?php endforeach; ?>
                     </datalist>
                     <small style="color: #ff1300 !important">
-                        <span class="align-items-center text-center">
-                        </span>
+                        <center>
+                            <i><?php echo $pays_err; ?></i>
+                        </center>
                     </small>
                   </div>
                 </div>
@@ -446,8 +463,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         <?php endforeach; ?>
                     </datalist>
                     <small style="color: #ff1300 !important">
-                        <span class="align-items-center text-center">
-                        </span>
+                        <center>
+                            <i><?php echo $ville_err; ?></i>
+                        </center>
                     </small>
                   </div>
                   <div class="col-sm-4 mt-2">
@@ -458,8 +476,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         <?php endforeach; ?>
                     </datalist>
                     <small style="color: #ff1300 !important">
-                        <span class="align-items-center text-center">
-                        </span>
+                        <center>
+                            <i><?php echo $longitude_err; ?></i>
+                        </center>
                     </small>
                  </div>
                  <div class="col-sm-4 mt-2">
@@ -470,8 +489,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         <?php endforeach; ?>
                     </datalist>
                     <small style="color: #ff1300 !important">
-                        <span class="align-items-center text-center">
-                        </span>
+                        <center>
+                            <i><?php echo $latitude_err; ?></i>
+                        </center>
                     </small>
                  </div>
                 </div>
@@ -496,8 +516,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         <?php endforeach; ?>
                     </datalist>
                     <small style="color: #ff1300 !important">
-                        <span class="align-items-center text-center">
-                        </span>
+                        <center>
+                            <i><?php echo $typeActeur_err; ?></i>
+                        </center>
                     </small>
                   </div>
                   
@@ -508,9 +529,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         <option> Feminin
                     </datalist>
                     <small style="color: #ff1300 !important">
-                        <span class="align-items-center text-center">
-                           
-                        </span>
+                        <center>
+                            <i><?php echo $sexeVictime_err; ?></i>
+                        </center>
                     </small> 
                  </div>
                   <div class="col-sm-4">
@@ -519,11 +540,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                             <option> Masculin
                             <option> Feminin
                         </datalist>             
-                             <small style="color: #ff1300 !important">
-                        <span class="align-items-center text-center">
-                            
-                        </span>
-                    </small>
+                        <small style="color: #ff1300 !important">
+                            <center>
+                                <i><?php echo $sexeResponsable_err; ?></i>
+                            </center>
+                        </small>
                   </div>
                 </div>
                 <div>

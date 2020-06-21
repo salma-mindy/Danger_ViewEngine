@@ -20,7 +20,7 @@ if(isset($_POST['update'])){
 
     $idUser = $_SESSION["id"];
     
-    $userid= isset($_POST["id"]) ? $_POST["id"] : '';
+    $dangerid = isset($_POST["id"]) ? $_POST["id"] : '';
     //var_dump($idUser);exit();
     if (empty($_POST["numeroOrdre"])) {
         $numeroOrdre_err = "Le numeroOrdre est obligatoire";
@@ -124,7 +124,7 @@ if(isset($_POST['update'])){
        empty($sexeResponsable_err)){
         
         // Préparons une instruction d'insertion
-        $sql = "UPDATE danger SET numeroOrdre=:numeroOrdre, description=:description, date=:date, source=:source, Lieu=:Lieu, dangerType=:dangerType, descripendroit=:descripendroit, pays=:pays, ville=:ville, longitude=:longitude, latitude=:latitude, typeActeur=:typeActeur, sexeVictime=:sexeVictime, sexeResponsable=:sexeResponsable, idUtilisateur={$idUser})";
+        $sql = "UPDATE danger SET numeroOrdre=:numeroOrdre, description=:description, date=:date, source=:source, Lieu=:Lieu, dangerType=:dangerType, descripendroit=:descripendroit, pays=:pays, ville=:ville, longitude=:longitude, latitude=:latitude, typeActeur=:typeActeur, sexeVictime=:sexeVictime, sexeResponsable=:sexeResponsable WHERE idUtilisateur=:oppid AND id=:uid";
          
         if($stmt = $db->prepare($sql)){
             // Bind variables to the prepared statement as parameters
@@ -142,6 +142,8 @@ if(isset($_POST['update'])){
             $stmt->bindParam(":typeActeur", $param_typeActeur, PDO::PARAM_STR);
             $stmt->bindParam(":sexeVictime", $param_sexeVictime, PDO::PARAM_STR);
             $stmt->bindParam(":sexeResponsable", $param_sexeResponsable, PDO::PARAM_STR);
+            $stmt->bindParam(":oppid", $idUser, PDO::PARAM_STR);
+            $stmt->bindParam(":uid", $dangerid, PDO::PARAM_STR);
             
             // Set parameters
             $param_numeroOrdre = $numeroOrdre;
@@ -167,6 +169,7 @@ if(isset($_POST['update'])){
             }
         }
     }
+    
 }
 ?>
 <!DOCTYPE html>
@@ -176,7 +179,7 @@ if(isset($_POST['update'])){
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Danger View - Admin | Ajouter</title>
+    <title>Danger View - opérateur | Mise à jour</title>
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <script src="../include/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
@@ -323,7 +326,7 @@ if(isset($_POST['update'])){
                     
                     <div class="card mb-4">
                         <h5 class=" h4 card-header" style="background: #a19e9e !important">
-                            <center>Ajout d'informations</center>
+                            <center>Mise à jour d'informations</center>
                         </h5>
                         <div class="card-body">
                         <div class="row">
@@ -397,7 +400,7 @@ if(isset($_POST['update'])){
                   </div>
                 
                 <div class="form-group">
-                  <textarea class="form-control " rows="5" id="description" name="description" placeholder="Description..." value="<?= $result['description'] ?>"></textarea>
+                  <textarea style="resize: none;" class="form-control " rows="5" id="description" name="description" placeholder="Description..." ><?= $result['description'] ?></textarea>
                 </div>
                 <div class="mt-3">
                     <h5 style="color: #ffc500">Description du lieu</h5>

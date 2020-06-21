@@ -198,7 +198,7 @@ if(isset($_POST['update']))
                     <?php endif ?>
                     <div class="card mb-4">
                         <h5 class=" h4 card-header" style="background: #a19e9e !important">
-                            <center>Ajouter un opérateur</center>
+                            <center>Mettre à jour les informations d'un opérateur</center>
                         </h5>
                         <div class="card-body">
                         <div class="row">

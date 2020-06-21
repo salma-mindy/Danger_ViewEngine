@@ -133,7 +133,7 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                             <?php
                                 require_once '../php/db.php';
                                 
-                                $limit = 2;
+                                $limit = 4;
                                 $query = "SELECT count(*) FROM utilisateurs";
 
                                 $s = $db->query($query);

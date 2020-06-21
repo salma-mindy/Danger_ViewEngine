@@ -22,7 +22,7 @@ $(document).ready(function() {
                                 $(this).remove();
                             });
                         } else {
-                            bootbox.alert('Opérateur non supprimer.');
+                            bootbox.alert('Vous ne pouvez pas supprimer cet opérateur au risque de perdre les informations qu\'il à enrégistrer.').css('color', '#000');
                         }
 
                     }

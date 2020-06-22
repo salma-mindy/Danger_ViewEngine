@@ -34,18 +34,10 @@ if(isset($_POST['update'])){
         $description = trim($_POST["description"]);
       }
     // validation date
-    if (empty($_POST["date"])) {
+      if (empty($_POST["date"])) {
         $date_err = "Le date est obligatoire";
       } else {
         $date = trim($_POST["date"]);
-        $test_arr  = explode('/', $date);
-        if (count($test_arr) == 3) {
-            if (checkdate($test_arr[0], $test_arr[1], $test_arr[2])) {
-                $date = trim($_POST["date"]);
-            } else {
-                $date_err = "Le format de la date est incorrecte";
-            }
-        }
       }
     
       if (empty($_POST["source"])) {
@@ -262,16 +254,16 @@ if(isset($_POST['update'])){
                     <span>Accueil</span></a>
             </li>
 
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="./ajouter-danger.php">
-                    <i class="fa fa-user-plus" aria-hidden="true"></i>
+                    <i class="fa fa-plus-square" aria-hidden="true"></i>
                     <span>Ajouter un danger</span>
                 </a>
             </li>
 
             <li class="nav-item">
                 <a class="nav-link" href="./liste-des-danger-ajouter.php">
-                    <i class="fa fa-users" aria-hidden="true"></i>
+                    <i class="fa fa-list-alt" aria-hidden="true"></i>
                     <span>Liste des danger ajouter</span></a>
             </li>
         </ul>
@@ -379,7 +371,7 @@ if(isset($_POST['update'])){
 
                  <div class="form-group row ">
                   <div class="col-sm-6">
-                    <input type="date" class="form-control form-control-user" id="date" name="date" placeholder="Indiquez la date" value="<?= $result['date'] ?>">
+                    <input type="text" class="form-control form-control-user" id="date" name="date" placeholder="Indiquez la date" value="<?= $result['date'] ?>">
                     <small style="color: #ff1300 !important">
                         <span class="align-items-center text-center">
                         </span>

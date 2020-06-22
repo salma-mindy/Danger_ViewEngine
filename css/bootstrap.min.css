@@ -4844,8 +4844,8 @@
  .page-item.active .page-link {
      z-index: 1;
      color: #fff;
-     background-color: #4e73df;
-     border-color: #4e73df
+     background-color: #ff1300;
+     border-color: #565050
  }
  
  .page-item.disabled .page-link {
@@ -6524,6 +6524,10 @@
  
  .bg-warning {
      background-color: #f6c23e!important
+ }
+ 
+ .bg-jaune {
+     background-color: #ffc500!important;
  }
  
  a.bg-warning:focus,

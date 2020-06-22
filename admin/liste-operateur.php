@@ -130,31 +130,70 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                                     </div>
                                 </div>
                             </div>
+                            
                             <?php
+                                // On détermine sur quelle page on se trouve
+                                if(isset($_GET['page']) && !empty($_GET['page'])){
+                                    $currentPage = (int) strip_tags($_GET['page']);
+                                }else{
+                                    $currentPage = 1;
+                                }
+                                // On se connecte à là base de données
                                 require_once '../php/db.php';
+
+                                // On détermine le nombre total d'operateurs
+                                $sql = "SELECT COUNT(*) AS nb_utilisateurs FROM utilisateurs WHERE idRole =2";
+                                // On prépare la requête
+                                $query = $db->prepare($sql);
+                                // On exécute
+                                $query->execute();
+                                // On récupère le nombre d'operateurs
+                                $result = $query->fetch();
+                                $nbDangers = (int) $result['nb_utilisateurs'];
+                                // On détermine le nombre d'operateurs par page
+                                $parPage = 6;
+                                // On calcule le nombre de pages total
+                                $pages = ceil($nbDangers / $parPage);
+                                // Calcul du premier operateur de la page
+                                $premier = ($currentPage * $parPage) - $parPage;
+
+                                $sql = 'SELECT * FROM danger WHERE idUtilisateur=:userId ORDER BY dateAjout DESC LIMIT :premier, :parpage;';
+                                $sql = "SELECT utilisateurs.id,utilisateurs.nom,utilisateurs.prenom,utilisateurs.contact,utilisateurs.email,utilisateurs.adresse FROM utilisateurs LEFT JOIN roles ON roles.id=utilisateurs.idRole WHERE roles.intituleRole = 'ROLE_OPERATEUR' ORDER BY dateInscription DESC LIMIT :premier, :parpage";
                                 
-                                $limit = 4;
-                                $query = "SELECT count(*) FROM utilisateurs";
+                                // On prépare la requête
+                                $query = $db->prepare($sql);
 
-                                $s = $db->query($query);
-                                $total_results = $s->fetchColumn();
-                                $total_pages = ceil($total_results/$limit);
+                                $query->bindValue(':premier', $premier, PDO::PARAM_INT);
+                                $query->bindValue(':parpage', $parPage, PDO::PARAM_INT);
 
-                                if (!isset($_GET['page'])) {
-                                    $page = 1;
-                                } else{
-                                    $page = $_GET['page'];
+                                // On exécute
+                                $query->execute();
+                                // On récupère les valeurs dans un tableau associatif
+                                $operateurs = $query->fetchAll(PDO::FETCH_ASSOC);
+                                
+                                $o_nb = count($operateurs);
+                                
+                                //on suppose qu'il n'y a pas suffisamment de donnée pour afficher une pagination
+                                $afficherPagination = FALSE;
+
+                                //si le nombre de page est superieur à 0 alors on affiche la pagination
+                                //si non, pas de pagination
+                                if($pages > 0){
+                                    $afficherPagination = TRUE;
+                                }else{
+                                    $afficherPagination = FALSE;
                                 }
 
-                                $starting_limit = ($page-1)*$limit;
-
-                                $sql = "SELECT utilisateurs.id,utilisateurs.nom,utilisateurs.prenom,utilisateurs.contact,utilisateurs.email,utilisateurs.adresse FROM utilisateurs LEFT JOIN roles ON roles.id=utilisateurs.idRole WHERE roles.intituleRole = 'ROLE_OPERATEUR' ORDER BY id DESC LIMIT {$starting_limit},{$limit}";
-                                $query = $db->prepare($sql);
-                                $query->execute();
-                                $data = $query->fetchAll();
-                                //var_dump($data);exit();
+                                //var_dump($d_nb);exit();
                             ?>
                                 <div class="card-body">
+                                    <?php if($o_nb === 0): ?>
+                                    <center>
+                                        <strong class="mt-4 mb-4">
+                                            Pas d'informations disponible
+                                        </strong>
+                                    </center>
+                                    <?php else: ?>
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <div class="table-responsive">
@@ -172,28 +211,28 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                                                     <tbody>
 
                                                         <tbody class="text-center text-secondary">
-                                                            <?php  foreach($data as $results): ?>
+                                                            <?php  foreach($operateurs as $operateur): ?>
                                                             <tr>
                                                                 <td>
-                                                                    <?= $results['id']; ?>
+                                                                    <?= $operateur['id']; ?>
                                                                 </td>
                                                                 <td>
-                                                                    <?= $results["nom"]; ?>
+                                                                    <?= $operateur["nom"]; ?>
                                                                 </td>
                                                                 <td>
-                                                                    <?=  $results["prenom"]; ?>
+                                                                    <?=  $operateur["prenom"]; ?>
                                                                 </td>
                                                                 <td>
-                                                                    <?=  $results["email"]; ?>
+                                                                    <?=  $operateur["email"]; ?>
                                                                 </td>
                                                                 <td>
-                                                                    <?=  $results["contact"]; ?>
+                                                                    <?=  $operateur["contact"]; ?>
                                                                 </td>
                                                                 <td>
-                                                                    <a href="mettre-operateur-jour.php?id=<?php echo htmlentities($results["id"]); ?>" type="button" class="text-primary">
+                                                                    <a href="mettre-operateur-jour.php?id=<?php echo htmlentities($operateur["id"]); ?>" type="button" class="text-primary">
                                                                         <i class="fa fa-edit fa-lg"></i>
                                                                     </a>&nbsp;&nbsp;
-                                                                    <a class="delete text-danger" id='del_<?= $results["id"] ?>' data-id='<?= $results["id"] ?>'>
+                                                                    <a class="delete text-danger" id='del_<?= $operateur["id"] ?>' data-id='<?= $operateur["id"] ?>'>
                                                                         <i class="fa fa-trash fa-lg"></i>
                                                                     </a>&nbsp;&nbsp;
                                                                 </td>
@@ -202,32 +241,43 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                                                         </tbody>
                                                 </table>
 
-                                                <nav aria-label="pagination">
+                                                <?php
+                                                    // s'il y a pagination, alors on affichera notre nav
+                                                    if($afficherPagination = TRUE):
+                                                ?>
+                                                <nav aria-label="pagination" >
                                                     
                                                     <ul class="pagination justify-content-center">
 
-                                                       <!--  <li class="page-item">
-                                                            <a class="page-link" href="" aria-label="Previous">
+                                                        <li class="page-item <?= ($currentPage == 1) ? "disabled" : "text-danger" ?>">
+                                                            <a class="page-link" href="?page=<?= $currentPage - 1 ?>" aria-label="Previous">
                                                             <span aria-hidden="true">&laquo;</span>
                                                             <span class="sr-only">Previous</span>
                                                             </a>
-                                                        </li> -->
+                                                        </li>
 
-                                                        <?php for ($page=1; $page <= $total_pages ; $page++): ?>
-                                                            <li class="page-item"><a class="page-link active" href="<?php echo "?page=$page"; ?>"><?php  echo $page; ?></a></li>
+                                                        <?php for($page = 1; $page <= $pages; $page++): ?>
+                                                            <li class="page-item <?= ($currentPage == $page) ? "active text-danger" : "" ?>">
+                                                                <a class="page-link" href="?page=<?= $page ?>">
+                                                                    <?= $page ?>
+                                                                </a>
+                                                            </li>
                                                         <?php endfor; ?>
-                                                       <!--  <li class="page-item">
-                                                            <a class="page-link" href="" aria-label="Next">
+
+                                                        <li class="page-item <?= ($currentPage == $pages) ? "disabled" : "text-danger" ?>">
+                                                            <a class="page-link" href="?page=<?= $currentPage + 1 ?>" aria-label="Next">
                                                             <span aria-hidden="true">&raquo;</span>
                                                             <span class="sr-only">Next</span>
                                                             </a>
-                                                        </li> -->
+                                                        </li>
 
                                                     </ul>
                                                 </nav>
+                                                <?php endif ?>
                                             </div>
                                         </div>
                                     </div>
+                                    <?php endif ?>
                                 </div>
                         </div>
                     </div>
@@ -252,39 +302,7 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
         </div>
         <!-- ./ Wrapper -->
 
-        <!-- Navigation top-->
-        <a class="scroll-to-top rounded" href="#page-top">
-            <i class="fa fa-angle-up"></i>
-        </a>
-
-        <div class="modal fade" id="">
-            <div class="modal-dialog modal-dialog-top" style="color: #fff !important">
-                <div class="modal-content">
-                    <div class="card" style="border-radius: 2px;">
-                        <div class="" style="background: #a19e9e !important">
-                            <div class="modal-header">
-                                <h4 class="modal-title" >Confirmer la suppression</h4>
-                                <button type="button" class="close" style="color: #ff1300 !important" data-dismiss="modal">&times;</button>
-                            </div>
-                        </div>
-                        <form action="delete-op.php" method="post">
-                            <div class="">
-                                <div class="modal-body">
-                                    <p class="text-center">
-                                      Vous êtes sur le point de supprimer l'opérateur : <strong style="color: #ffc500;"><?= $results['nom']; ?></strong>, Voulez-vous continuer?
-                                    </p>
-                                </div>
-                                <div class="modal-footer align-items-center">
-                                    <button type="button" class="btn btn-warning" style="color: #ff1300 !important" data-dismiss="modal">Non, annuler</button>
-                                    <input type="hidden" name="delete_id" value="<?php echo $results['id']; ?>">
-                                    <button type="submit" name="delete_btn" class="btn btn-danger" style="color: #ff1300;"> Oui, supprimer</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
+        
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js " integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo " crossorigin="anonymous "></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js " integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6 " crossorigin="anonymous "></script>
@@ -308,16 +326,6 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                                 l = e.wheelDelta || -e.detail;
                             this.scrollTop += 30 * (l < 0 ? 1 : -1), o.preventDefault()
                         }
-                    }), t(document).on("scroll ", function() {
-                        100 < t(this).scrollTop() ? t(".scroll-to-top ").fadeIn() :
-                            t(".scroll-to-top ").fadeOut()
-                    }),
-                    t(document).on("click ", "a.scroll-to-top ", function(o) {
-                        var e = t(this);
-                        t("html, body ").stop().animate({
-                                scrollTop: t(e.attr("href ")).offset().top
-                            }, 1e3, "easeInOutExpo "),
-                            o.preventDefault()
                     })
             }(jQuery);
         </script>

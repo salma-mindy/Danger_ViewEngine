@@ -52,51 +52,6 @@ if(isset($_POST['update']))
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <script src="../include/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
-    <?php 
-        if($errorMsg === "success"){
-            echo '<script type="text/javascript">
-                    $(document).ready(function(){
-                        const Toast = Swal.mixin({
-                            toast: true,
-                            position: "top-end",
-                            showConfirmButton: false,
-                            timer: 5000,
-                            timerProgressBar: true,
-                            onOpen: (toast) => {
-                              toast.addEventListener("mouseenter", Swal.stopTimer)
-                              toast.addEventListener("mouseleave", Swal.resumeTimer)
-                            }
-                          })
-                          
-                          Toast.fire({
-                            icon: "success",
-                            title: "Opérateur ajouté avec succès!"
-                          })
-                    });
-                </script>';
-        }elseif($errorMsg === "error"){
-            echo '<script type="text/javascript">
-                    $(document).ready(function(){
-                        const Toast = Swal.mixin({
-                            toast: true,
-                            position: "top-end",
-                            showConfirmButton: false,
-                            timer: 5000,
-                            timerProgressBar: true,
-                            onOpen: (toast) => {
-                              toast.addEventListener("mouseenter", Swal.stopTimer)
-                              toast.addEventListener("mouseleave", Swal.resumeTimer)
-                            }
-                          })
-                          
-                          Toast.fire({
-                            icon: "error",
-                            title: "Une erreur s\'est produite lors de l\'ajout, veillez réessayer svp!"
-                          })
-                    });
-                </script>';
-        }
-    ?>
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link rel="icon" type="image/png" href="../img/logo1.png" />
     
@@ -122,7 +77,7 @@ if(isset($_POST['update']))
                     <span>Accueil</span></a>
             </li>
 
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="./ajouter-operateur.php">
                     <i class="fa fa-user-plus" aria-hidden="true"></i>
                     <span>Ajouter un opérateurs</span>

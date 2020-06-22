@@ -119,10 +119,11 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                             </h6>
                             <div class="card-body">
                                 <div class="card-text">
-                                    <p><i class="fa fa-times text-danger" aria-hidden="true"></i>&nbsp;&nbsp; Ajout de l'opérateur 8, il y a 2 minutes.</p>
-                                    <div>
-                                        <p><i class="fa fa-times text-danger" aria-hidden="true"></i>&nbsp;&nbsp; Suppression de l'opérateur 8, il y a 2 .</p>
-                                    </div>
+                                <p class="card-text">
+                                            <!-- <i class="fa fa-times text-danger" aria-hidden="true"></i>&nbsp; -->
+                                            <i>Aucune activité</i></p>
+                                            <br>
+                                            <br>
                                 </div>
                             </div>
                         </div>
@@ -143,7 +144,7 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                                     </div>
                                     <div class=" card-text col-md-6 text-center">
                                         <p>
-                                            Opérateurs <br> 0 <br> connectés
+                                            Opérateurs <br> 0 <br> connecté
                                         </p>
                                     </div>
                                 </div>

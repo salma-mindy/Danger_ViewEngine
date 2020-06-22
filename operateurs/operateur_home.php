@@ -51,14 +51,14 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
 
                 <li class="nav-item">
                     <a class="nav-link" href="./ajouter-danger.php">
-                        <i class="fa fa-user-plus" aria-hidden="true"></i>
+                        <i class="fa fa-plus-square" aria-hidden="true"></i>
                         <span>Ajouter un danger</span>
                     </a>
                 </li>
 
                 <li class="nav-item">
                     <a class="nav-link" href="./liste-des-danger-ajouter.php">
-                        <i class="fa fa-users" aria-hidden="true"></i>
+                        <i class="fa fa-list-alt" aria-hidden="true"></i>
                         <span>Liste des danger ajouter</span></a>
                 </li>
             </ul>
@@ -104,9 +104,9 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                                 </span>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                                    <a class="dropdown-item" href="#">
+                                    <!-- <a class="dropdown-item" href="profil-operateur.php">
                                         <i class="fa fa-user fa-sm fa-fw mr-2"></i> Mon Profil
-                                    </a>
+                                    </a> -->
                                     <a class="dropdown-item" href="../php/logout.php">
                                         <i class="fa fa-sign-out fa-sm fa-fw mr-2"></i> Déconnexion
                                     </a>
@@ -140,7 +140,7 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                                         <div class="text-center mt-1">
                                             <b><?php echo htmlspecialchars($_SESSION["prenom"]); ?></b> <br>
                                             <span><?php echo htmlspecialchars($_SESSION["email"]); ?></span> <br>
-                                            <span><a href="#" style="color: #ffc500; text-decoration: none;">Modifier vos informations</a></span>
+                                            <span><a href="editer-profil-operateur.php" style="color: #ffc500; text-decoration: none;">Modifier vos informations</a></span>
                                         </div>
                                     </div>
                                     <div class="card-body mt-3 mb-4">

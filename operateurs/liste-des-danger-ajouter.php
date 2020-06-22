@@ -27,7 +27,7 @@ require_once "../php/db.php";
         <link rel="icon" type="image/png" href="../img/logo1.png" />
     </head>
 
-    <body id="page-top">
+    <body>
         <div id="wrapper">
             <!-- Sidebar -->
             <ul class="navbar-nav sidebar sidebar-dark accordion" id="accordionSidebar" style="background: #000 !important;">
@@ -49,14 +49,14 @@ require_once "../php/db.php";
 
                 <li class="nav-item">
                     <a class="nav-link" href="./ajouter-danger.php">
-                        <i class="fa fa-user-plus" aria-hidden="true"></i>
+                        <i class="fa fa-plus-square" aria-hidden="true"></i>
                         <span>Ajouter un danger</span>
                     </a>
                 </li>
 
                 <li class="nav-item active">
                     <a class="nav-link" href="./liste-des-danger-ajouter.php">
-                        <i class="fa fa-users" aria-hidden="true"></i>
+                        <i class="fa fa-list-alt" aria-hidden="true"></i>
                         <span>Liste des danger ajouter</span></a>
                 </li>
             </ul>
@@ -125,13 +125,13 @@ require_once "../php/db.php";
                             <div class="h4 card-header font-weight-normal" style="background: #a19e9e !important">
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <h4 class="mt-2 text-white">Les danger que vous avez ajouter</h4>
+                                        <h4 class="mt-2 text-white">Les informations que vous avez ajouter</h4>
                                     </div>
                                     <div class="col-lg-6">
                                         <a href="ajouter-danger.php">
                                             <button type="button" class="btn btn-danger m-1 float-right" style="background: #ff1300!important; color:#fff;">
                                                 <i class="fa fa-plus-square fa-lg"></i>
-                                                &nbsp;&nbsp; Ajouter un danger
+                                                &nbsp;&nbsp; Ajouter
                                             </button>
                                         </a>
                                     </div>
@@ -139,144 +139,172 @@ require_once "../php/db.php";
                             </div>
 
                             <?php
+                                // On détermine sur quelle page on se trouve
+                                if(isset($_GET['page']) && !empty($_GET['page'])){
+                                    $currentPage = (int) strip_tags($_GET['page']);
+                                }else{
+                                    $currentPage = 1;
+                                }
+                                // On se connecte à là base de données
                                 require_once '../php/db.php';
                                 $idUser = $_SESSION["id"];
-                                $limit = 2;
-                                $query = "SELECT count(*) FROM danger WHERE idUtilisateur={$idUser}";
 
-                                $s = $db->query($query);
-                                $total_results = $s->fetchColumn();
-                                $total_pages = ceil($total_results/$limit);
-
-                                if (!isset($_GET['page'])) {
-                                    $page = 1;
-                                } else{
-                                    $page = $_GET['page'];
-                                }
-
-                                $starting_limit = ($page-1)*$limit;
-
-                                $sql = "SELECT * FROM danger WHERE idUtilisateur={$idUser}";
+                                // On détermine le nombre total d'informations
+                                $sql = "SELECT COUNT(*) AS nb_dangers FROM danger WHERE idUtilisateur={$idUser}";
+                                // On prépare la requête
                                 $query = $db->prepare($sql);
+                                // On exécute
                                 $query->execute();
-                                $data = $query->fetchAll();
-                                //var_dump($data);exit();
+                                // On récupère le nombre d'informations
+                                $result = $query->fetch();
+                                $nbDangers = (int) $result['nb_dangers'];
+                                // On détermine le nombre d'informations par page
+                                $parPage = 3;
+                                // On calcule le nombre de pages total
+                                $pages = ceil($nbDangers / $parPage);
+                                // Calcul de la première information de la page
+                                $premier = ($currentPage * $parPage) - $parPage;
+
+                                $sql = 'SELECT * FROM danger WHERE idUtilisateur=:userId ORDER BY dateAjout DESC LIMIT :premier, :parpage;';
+                                // On prépare la requête
+                                $query = $db->prepare($sql);
+
+                                $query->bindValue(':premier', $premier, PDO::PARAM_INT);
+                                $query->bindValue(':parpage', $parPage, PDO::PARAM_INT);
+                                $query->bindValue(':userId', $idUser, PDO::PARAM_INT);
+
+                                // On exécute
+                                $query->execute();
+                                // On récupère les valeurs dans un tableau associatif
+                                $dangers = $query->fetchAll(PDO::FETCH_ASSOC);
+
+                                $d_nb = count($dangers);
+                                //var_dump($d_nb);exit();
                             ?>
                                 <div class="card-body">
+                                    <?php if($d_nb === 0): ?>
+                                    <center>
+                                        <strong class="mt-4 mb-4">
+                                            Pas d'informations disponible
+                                        </strong>
+                                    </center>
+                                    <?php else: ?>
                                     <div class="row">
                                         <div class="col-lg-12">
-                                            <div class="table-responsive">
-                                                <table id="user_data" class="table table-striped table-sm table-bordered" style="color: #fff;">
-                                                    <thead>
-                                                        <tr class="text-center">
-                                                            <th>Id</th>
-                                                            <th>Numero d'ordre</th>
-                                                            <th>Source</th>
-                                                            <th>Sexe victime</th>
-                                                            <th>Sexe responsable</th>
-                                                            <th>Type de danger</th>
-                                                            <th>Lieu</th>
-                                                            <th>Actions</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-
-                                                        <tbody class="text-center text-secondary">
-                                                            <?php  foreach($data as $results): ?>
-                                                            <tr>
-                                                                <td>
-                                                                    <?= $results['id']; ?>
-                                                                </td>
-                                                                <td>
-                                                                    <?= $results["numeroOrdre"]; ?>
-                                                                </td>
-                                                                <td>
-                                                                    <?=  $results["source"]; ?>
-                                                                </td>
-                                                                <td>
-                                                                    <?=  $results["sexeVictime"]; ?>
-                                                                </td>
-                                                                <td>
-                                                                    <?=  $results["sexeResponsable"]; ?>
-                                                                </td>
-                                                                <td>
-                                                                    <?=  $results["dangerType"]; ?>
-                                                                </td>
-                                                                <td>
-                                                                    <?=  $results["ville"]; ?>
-                                                                </td>
-                                                                <td>
-                                                                    <a href="mettre-danger-a-jour.php?id=<?php echo htmlentities($results["id"]); ?>" type="button" class="text-primary">
-                                                                        <i class="fa fa-edit fa-lg"></i>
-                                                                    </a>&nbsp;&nbsp;
-                                                                    <a class="delete text-danger" id='del_<?= $results["id"] ?>' data-id='<?= $results["id"] ?>'>
-                                                                        <i class="fa fa-trash fa-lg"></i>
-                                                                    </a>&nbsp;&nbsp;
-                                                                </td>
+                                            <div class="p-1">
+                                                <div class="table-responsive">
+                                                    <table id="user_data" class="table table-striped table-sm table-bordered" style="color: #fff;">
+                                                        <thead>
+                                                            <tr class="text-center">
+                                                                <th>Id</th>
+                                                                <th>Numero d'ordre</th>
+                                                                <th>Source</th>
+                                                                <th>Sexe victime</th>
+                                                                <th>Sexe responsable</th>
+                                                                <th>Type de danger</th>
+                                                                <th>Lieu</th>
+                                                                <th>Actions</th>
                                                             </tr>
-                                                            <?php endforeach; ?>
-                                                        </tbody>
-                                                </table>
+                                                        </thead>
+                                                        <tbody>
 
-                                                <nav aria-label="pagination">
+                                                            <tbody class="text-center text-secondary">
+                                                                <?php  foreach($dangers as $danger): ?>
+                                                                <tr>
+                                                                    <td>
+                                                                        <?= $danger['id']; ?>
+                                                                    </td>
+                                                                    <td>
+                                                                        <?= $danger["numeroOrdre"]; ?>
+                                                                    </td>
+                                                                    <td>
+                                                                        <a href="<?=  $danger["source"]; ?>" target="_blank">
+                                                                            Lien
+                                                                        </a>
+                                                                    </td>
+                                                                    <td>
+                                                                        <?=  $danger["sexeVictime"]; ?>
+                                                                    </td>
+                                                                    <td>
+                                                                        <?=  $danger["sexeResponsable"]; ?>
+                                                                    </td>
+                                                                    <td>
+                                                                        <?=  $danger["dangerType"]; ?>
+                                                                    </td>
+                                                                    <td>
+                                                                        <?=  $danger["ville"]; ?>
+                                                                    </td>
+                                                                    <td>
+                                                                        <a href="mettre-danger-a-jour.php?id=<?php echo htmlentities($danger["id"]); ?>" type="button" class="text-primary">
+                                                                            <i class="fa fa-edit fa-lg"></i>
+                                                                        </a>&nbsp;&nbsp;
+                                                                        <a class="delete text-danger" id='del_<?= $danger["id"] ?>' data-id='<?= $danger["id"] ?>'>
+                                                                            <i class="fa fa-trash fa-lg"></i>
+                                                                        </a>&nbsp;&nbsp;
+                                                                    </td>
+                                                                </tr>
+                                                                <?php endforeach; ?>
+                                                            </tbody>
+                                                    </table>
                                                     
-                                                    <ul class="pagination justify-content-center">
+                                                    <nav aria-label="pagination" >
+                                                        
+                                                        <ul class="pagination justify-content-center">
 
-                                                       <!--  <li class="page-item">
-                                                            <a class="page-link" href="" aria-label="Previous">
-                                                            <span aria-hidden="true">&laquo;</span>
-                                                            <span class="sr-only">Previous</span>
-                                                            </a>
-                                                        </li> -->
+                                                            <li class="page-item <?= ($currentPage == 1) ? "disabled" : "text-danger" ?>">
+                                                                <a class="page-link" href="?page=<?= $currentPage - 1 ?>" aria-label="Previous">
+                                                                <span aria-hidden="true">&laquo;</span>
+                                                                <span class="sr-only">Previous</span>
+                                                                </a>
+                                                            </li>
 
-                                                        <?php for ($page=1; $page <= $total_pages ; $page++): ?>
-                                                            <li class="page-item"><a class="page-link active" href="<?php echo "?page=$page"; ?>"><?php  echo $page; ?></a></li>
-                                                        <?php endfor; ?>
-                                                       <!--  <li class="page-item">
-                                                            <a class="page-link" href="" aria-label="Next">
-                                                            <span aria-hidden="true">&raquo;</span>
-                                                            <span class="sr-only">Next</span>
-                                                            </a>
-                                                        </li> -->
+                                                            <?php for($page = 1; $page <= $pages; $page++): ?>
+                                                                <li class="page-item <?= ($currentPage == $page) ? "active text-danger" : "" ?>">
+                                                                    <a class="page-link" href="?page=<?= $page ?>">
+                                                                        <?= $page ?>
+                                                                    </a>
+                                                                </li>
+                                                            <?php endfor; ?>
 
-                                                    </ul>
-                                                </nav>
+                                                            <li class="page-item <?= ($currentPage == $pages) ? "disabled" : "text-danger" ?>">
+                                                                <a class="page-link" href="?page=<?= $currentPage + 1 ?>" aria-label="Next">
+                                                                <span aria-hidden="true">&raquo;</span>
+                                                                <span class="sr-only">Next</span>
+                                                                </a>
+                                                            </li>
+
+                                                        </ul>
+                                                    </nav>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <?php endif ?>
                                 </div>
                         </div>
                     </div>
-                    <!-- /Contenue de la page -->
+                    <!-- ./Contenue de la page -->
 
                     <!-- Footer -->
-                    <footer class="sticky-footer bg-white" style="background: #ffc500 !important;">
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <footer class="sticky-footer bg-jaune" style="background: #ffc500 !important">
                         <div class="container">
                             <div class="copyright text-center">
                                 <span>Copyright &copy; 2020, design by Sheila Melissa</span>
                             </div>
                         </div>
                     </footer>
-                    <!-- End of Footer -->
-
+                    <!-- ./ Footer -->
                 </div>
-                <!-- End of Content Wrapper -->
-
             </div>
-            <!-- ./ Wrapper -->
-
-            <!-- Navigation top-->
-            <a class="scroll-to-top rounded" href="#page-top">
-                <i class="fa fa-angle-up"></i>
-            </a>
-
-            
+            <!-- ./ Wrapper -->           
 
             <!-- jQuery first, then Popper.js, then Bootstrap JS -->
             <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
             <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-            <script type="text/javascript " src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js "></script>
-            <script type="text/javascript " src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js "></script>
             <script type="text/javascript">
                 ! function(t) {
                     "use strict";

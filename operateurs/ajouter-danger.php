@@ -260,14 +260,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
             <li class="nav-item active">
                 <a class="nav-link" href="./ajouter-danger.php">
-                    <i class="fa fa-user-plus" aria-hidden="true"></i>
+                    <i class="fa fa-plus-square" aria-hidden="true"></i>
                     <span>Ajouter un danger</span>
                 </a>
             </li>
 
             <li class="nav-item">
                 <a class="nav-link" href="./liste-des-danger-ajouter.php">
-                    <i class="fa fa-users" aria-hidden="true"></i>
+                    <i class="fa fa-list-alt" aria-hidden="true"></i>
                     <span>Liste des danger ajouter</span></a>
             </li>
         </ul>
@@ -394,7 +394,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                   </div>
                 
                 <div class="form-group">
-                  <textarea class="form-control " rows="5" id="description" name="description" placeholder="Description..."></textarea>
+                  <textarea class="form-control " rows="5" id="description" name="description" placeholder="Description..." style="resize:none"></textarea>
                   <small style="color: #ff1300 !important">
                         <center>
                             <i><?php echo $description_err; ?></i>

@@ -352,30 +352,16 @@ if(isset($_POST['update'])){
                 <div class="form-group row ">
                   <div class="col-sm-6 mb-3 mb-sm-0">
                     <input type="text" class="form-control form-control-user" id="numeroOrdre" name="numeroOrdre" placeholder="Numero d'ordre" value="<?= $result['numeroOrdre'] ?>">
-                    <small style="color: #ff1300 !important">
-                        <span class="align-items-center text-center">
-                           
-                        </span>
-                    </small>
                   </div>
                   
                   <div class="col-sm-6 mb-3 mb-sm-0">
                     <input type="text" class="form-control form-control-user" id="source" name="source" placeholder="Veuillez indiquer la Source" value="<?= $result['source'] ?>">
-                    <small style="color: #ff1300 !important">
-                        <span class="align-items-center text-center">
-                            
-                        </span>
-                    </small> 
                  </div>
                  </div>
 
                  <div class="form-group row ">
                   <div class="col-sm-6">
                     <input type="text" class="form-control form-control-user" id="date" name="date" placeholder="Indiquez la date" value="<?= $result['date'] ?>">
-                    <small style="color: #ff1300 !important">
-                        <span class="align-items-center text-center">
-                        </span>
-                    </small>
                   </div>
                   <?php
                     require_once "../php/db.php";
@@ -392,10 +378,6 @@ if(isset($_POST['update'])){
                             <option> <?= ucfirst($res_td["intitule"]); ?>
                         <?php endforeach; ?>
                     </datalist>
-                    <small style="color: #ff1300 !important">
-                        <span class="align-items-center text-center">
-                        </span>
-                    </small>
                   </div>
                   </div>
                 
@@ -409,85 +391,23 @@ if(isset($_POST['update'])){
                 <div class="form-group row">
                   <div class="col-sm-4 mb-3 mb-sm-0">
                     <input type="text" class="form-control form-control-user" id="Lieu" name="Lieu" placeholder="Nom de l'endroit" value="<?= $result['Lieu'] ?>">
-                    <small style="color: #ff1300 !important">
-                        <span class="align-items-center text-center">
-                        </span>
-                    </small>
                   </div>
                   <div class="col-sm-4 mb-3 mb-sm-0">
                     <input type="text" class="form-control form-control-user" id="descripendroit" name="descripendroit" placeholder="Décrivez l'endroit" value="<?= $result['descripendroit'] ?>">
-                    <small style="color: #ff1300 !important">
-                        <span class="align-items-center text-center">
-                        </span>
-                    </small> 
                  </div>
                   <div class="col-sm-4">
-                  <?php
-                    require_once "../php/db.php";
-
-                    $sql_p = "SELECT * FROM pays";
-                    $query_p = $db->prepare($sql_p);
-                    $query_p->execute();
-                    $data_p = $query_p->fetchAll();
-                ?>  
-             
                     <input type="text" list="Pays" class="form-control form-control-user" id="pays" name="pays" placeholder="Pays" value="<?= $result['pays'] ?>">
-                    <datalist id="Pays" >
-                        <?php  foreach($data_p as $res_p): ?>
-                            <option> <?= ucfirst($res_p["nom"]); ?>
-                        <?php endforeach; ?>
-                    </datalist>
-                    <small style="color: #ff1300 !important">
-                        <span class="align-items-center text-center">
-                        </span>
-                    </small>
                   </div>
                 </div>
                 <div class="form-group row ">
-                  <div class="col-sm-4 mb-3 mt-2 mb-sm-0">
-                  <?php
-                    require_once "../php/db.php";
-
-                    $sql_v = "SELECT * FROM ville";
-                    $query_v = $db->prepare($sql_v);
-                    $query_v->execute();
-                    $data_v = $query_v->fetchAll();
-                    ?>  
-             
+                  <div class="col-sm-4 mb-3 mt-2 mb-sm-0"> 
                     <input type="text" list="vlle" class="form-control form-control-user" id="ville" name="ville" placeholder="Ville" value="<?= $result['ville'] ?>">
-                    <datalist id="vlle" >
-                        <?php  foreach($data_v as $res_v): ?>
-                            <option> <?= ucfirst($res_v["ville"]); ?>
-                        <?php endforeach; ?>
-                    </datalist>
-                    <small style="color: #ff1300 !important">
-                        <span class="align-items-center text-center">
-                        </span>
-                    </small>
                   </div>
                   <div class="col-sm-4 mt-2">
                     <input type="text" list="lng" class="form-control form-control-user" id="longitude" name="longitude" placeholder="Longitude" value="<?= $result['longitude'] ?>">
-                    <datalist id="lng" >
-                        <?php  foreach($data_v as $res_v): ?>
-                            <option> <?= ucfirst($res_v["lng"]); ?>
-                        <?php endforeach; ?>
-                    </datalist>
-                    <small style="color: #ff1300 !important">
-                        <span class="align-items-center text-center">
-                        </span>
-                    </small>
                  </div>
                  <div class="col-sm-4 mt-2">
                     <input type="text" list="lat" class="form-control form-control-user" id="latitude" name="latitude" placeholder="Latitude" value="<?= $result['latitude'] ?>">
-                    <datalist id="lat" >
-                        <?php  foreach($data_v as $res_v): ?>
-                            <option> <?= ucfirst($res_v["lat"]); ?>
-                        <?php endforeach; ?>
-                    </datalist>
-                    <small style="color: #ff1300 !important">
-                        <span class="align-items-center text-center">
-                        </span>
-                    </small>
                  </div>
                 </div>
                 <div class="mt-3">
@@ -495,50 +415,15 @@ if(isset($_POST['update'])){
                 </div>
                 <hr>
                 <div class="form-group row ">
-                <?php
-                    require_once "../php/db.php";
-
-                    $sql_a = "SELECT * FROM acteurs";
-                    $query_a = $db->prepare($sql_a);
-                    $query_a->execute();
-                    $data_a = $query_a->fetchAll();
-                ?>  
                   <div class="col-sm-4 mb-3 mb-sm-0">
                     <input type="text" list="persons" class="form-control form-control-user" id="typeActeur" name="typeActeur" placeholder="Type d'acteur" value="<?= $result['typeActeur'] ?>">
-                    <datalist id="persons" >
-                        <?php  foreach($data_a as $res_a): ?>
-                            <option> <?= ucfirst($res_a["intitule"]); ?>
-                        <?php endforeach; ?>
-                    </datalist>
-                    <small style="color: #ff1300 !important">
-                        <span class="align-items-center text-center">
-                        </span>
-                    </small>
                   </div>
                   
                   <div class="col-sm-4 mb-3 mb-sm-0">
                     <input type="text" list="sexe" class="form-control form-control-user" id="sexeVictime" name="sexeVictime" placeholder="Sexe Victimes" value="<?= $result['sexeVictime'] ?>">
-                    <datalist id="sexe" >
-                        <option> Masculin
-                        <option> Feminin
-                    </datalist>
-                    <small style="color: #ff1300 !important">
-                        <span class="align-items-center text-center">
-                           
-                        </span>
-                    </small> 
                  </div>
                   <div class="col-sm-4">
                     <input type="text" list=Sresp class="form-control form-control-user" id="sexeResponsable" name="sexeResponsable" placeholder="Sexe Responsables" value="<?= $result['sexeResponsable'] ?>">
-                        <datalist id="Sresp" >
-                            <option> Masculin
-                            <option> Feminin
-                        </datalist>             
-                             <small style="color: #ff1300 !important">
-                        <span class="align-items-center text-center">
-                            
-                        </span>
-                    </small>
                   </div>
                 </div>
                 <div>

@@ -186,6 +186,45 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     <title>Danger View - Admin | Ajouter</title>
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <script src="../include/jquery-3.5.1.min.js"></script>
+    <script>
+        function comboInit(paysId){
+            pays = document.getElementById(pays);  
+            var idx = paysId.selectedIndex;
+            var content = paysId.options[idx].innerHTML;
+            if(pays.value == "")
+                pays.value = content;	
+        }
+
+        function combo(paysId, pays){
+            pays = document.getElementById(pays);  
+            var idx = paysId.selectedIndex;
+            var content = paysId.options[idx].innerHTML;
+            pays.value = content;	
+        }
+        $(function() {
+            $("#paysId").bind("change", function() {
+                $.ajax({
+                    type: "GET", 
+                    url: "change.php",
+                    data: "paysId="+$("#paysId").val(),
+                    success: function(html) {
+                        $("#ville").html(html);
+                    }
+                });
+            });
+            $("#ville").bind("change", function() {
+                $.ajax({
+                    type: "GET", 
+                    url: "change-lng.php",
+                    data: "ville="+$("#ville").val(),
+                    success: function(html) {
+                        $("#latLng").html(html);
+                    }
+                });
+            });
+        });
+        
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script> -->
     <?php 
@@ -362,7 +401,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                  </div>
 
                  <div class="form-group row ">
-                  <div class="col-sm-6">
+                  <div class="col-sm-6 mb-3">
                     <input type="date" class="form-control form-control-user" id="date" name="date" placeholder="Indiquez la date">
                     <small style="color: #ff1300 !important">
                         <center>
@@ -414,7 +453,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         </center>
                     </small>
                   </div>
-                  <div class="col-sm-4 mb-3 mb-sm-0">
+                  <div class="col-sm-8 mb-3 mb-sm-0">
                     <input type="text" class="form-control form-control-user" id="descripendroit" name="descripendroit" placeholder="Décrivez l'endroit">
                     <small style="color: #ff1300 !important">
                         <center>
@@ -422,78 +461,40 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         </center>
                     </small> 
                  </div>
-                  <div class="col-sm-4">
-                  <?php
-                    require_once "../php/db.php";
-
-                    $sql_p = "SELECT * FROM pays";
-                    $query_p = $db->prepare($sql_p);
-                    $query_p->execute();
-                    $data_p = $query_p->fetchAll();
-                ?>  
-             
-                    <input type="text" list="Pays" class="form-control form-control-user" id="pays" name="pays" placeholder="Pays">
-                    <datalist id="Pays" >
-                        <?php  foreach($data_p as $res_p): ?>
-                            <option> <?= ucfirst($res_p["nom"]); ?>
-                        <?php endforeach; ?>
-                    </datalist>
-                    <small style="color: #ff1300 !important">
-                        <center>
-                            <i><?php echo $pays_err; ?></i>
-                        </center>
-                    </small>
+                </div>
+                <div class="form-group row mb-2">
+                <div class="col-sm-4 mb-3 mb-sm-0">
+                    <div style="border-radius:10rem;display:inline-block;overflow:hidden;background:#464141;border:1px solid #000;padding: .7rem 1.5rem">
+                        <select name="paysId" id="paysId"  onChange="combo(this, 'pays')" onMouseOut="comboInit(this, 'pays')" style="width:100%;height:100%;border:0px;outline:none;background:#464141;color:#fff;font-size: .8rem;">
+                            <option>-- Choisir le pays --</option>
+                            <?php
+                                require_once "../php/db.php";
+                                $stmt = $db->query('SELECT id,nom FROM pays ORDER BY nom');
+                                while($row = $stmt->fetch(PDO::FETCH_OBJ)) {
+                                    echo "<option value='$row->id'>$row->nom</option>";
+                                }
+                            ?>
+                        </select>
+                    </div>
+                  </div>
+                  <div class="col-sm-4 mb-3 mb-sm-0">
+                    <input type="text" class="form-control form-control-user" id="pays" name="pays" placeholder="Saisir le pays"/>
+                  </div>
+                  <div class="col-sm-4 mb-1 mb-sm-0" >
+                    <div style="border-radius:10rem;display:inline-block;overflow:hidden;background:#464141;border:1px solid #000;padding: .7rem 1.5rem">
+                        <select id="ville" name="ville" style="width:100%;height:100%;border:0px;outline:none;background:#464141;color:#fff;font-size: .8rem;">
+                            <option>-- Choisir la ville --</option>
+                        </select>
+                    </div>
                   </div>
                 </div>
-                <div class="form-group row ">
-                  <div class="col-sm-4 mb-3 mt-2 mb-sm-0">
-                  <?php
-                    require_once "../php/db.php";
+                <div class="form-group row" id="latLng">
+                    <div class="col-sm-4 mt-2">
+                        
+                    </div>
+                   <div class="col-sm-4 mt-2">
 
-                    $sql_v = "SELECT * FROM ville";
-                    $query_v = $db->prepare($sql_v);
-                    $query_v->execute();
-                    $data_v = $query_v->fetchAll();
-                    ?>  
-             
-                    <input type="text" list="vlle" class="form-control form-control-user" id="ville" name="ville" placeholder="Ville">
-                    <datalist id="vlle" >
-                        <?php  foreach($data_v as $res_v): ?>
-                            <option> <?= ucfirst($res_v["ville"]); ?>
-                        <?php endforeach; ?>
-                    </datalist>
-                    <small style="color: #ff1300 !important">
-                        <center>
-                            <i><?php echo $ville_err; ?></i>
-                        </center>
-                    </small>
-                  </div>
-                  <div class="col-sm-4 mt-2">
-                    <input type="text" list="lng" class="form-control form-control-user" id="longitude" name="longitude" placeholder="Longitude">
-                    <datalist id="lng" >
-                        <?php  foreach($data_v as $res_v): ?>
-                            <option> <?= ucfirst($res_v["lng"]); ?>
-                        <?php endforeach; ?>
-                    </datalist>
-                    <small style="color: #ff1300 !important">
-                        <center>
-                            <i><?php echo $longitude_err; ?></i>
-                        </center>
-                    </small>
-                 </div>
-                 <div class="col-sm-4 mt-2">
-                    <input type="text" list="lat" class="form-control form-control-user" id="latitude" name="latitude" placeholder="Latitude">
-                    <datalist id="lat" >
-                        <?php  foreach($data_v as $res_v): ?>
-                            <option> <?= ucfirst($res_v["lat"]); ?>
-                        <?php endforeach; ?>
-                    </datalist>
-                    <small style="color: #ff1300 !important">
-                        <center>
-                            <i><?php echo $latitude_err; ?></i>
-                        </center>
-                    </small>
-                 </div>
+                   </div>
                 </div>
                 <div class="mt-3">
                     <h5 style="color: #ffc500">Information sur les différents acteurs</h5>
@@ -525,8 +526,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                   <div class="col-sm-4 mb-3 mb-sm-0">
                     <input type="text" list="sexe" class="form-control form-control-user" id="sexeVictime" name="sexeVictime" placeholder="Sexe Victimes">
                     <datalist id="sexe" >
-                        <option> Masculin
-                        <option> Feminin
+                        <option> Masculin </option>
+                        <option> Feminin </option>
                     </datalist>
                     <small style="color: #ff1300 !important">
                         <center>
@@ -537,8 +538,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                   <div class="col-sm-4">
                     <input type="text" list=Sresp class="form-control form-control-user" id="sexeResponsable" name="sexeResponsable" placeholder="Sexe Responsables">
                         <datalist id="Sresp" >
-                            <option> Masculin
-                            <option> Feminin
+                            <option> Masculin </option>
+                            <option> Feminin </option>
                         </datalist>             
                         <small style="color: #ff1300 !important">
                             <center>
@@ -585,13 +586,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     </div>
     <!-- ./ Wrapper -->
 
-    <!-- Navigation top-->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fa fa-angle-up"></i>
-    </a>
-
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 

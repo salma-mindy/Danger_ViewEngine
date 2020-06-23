@@ -2,10 +2,10 @@
 -- version 5.0.2
 -- https://www.phpmyadmin.net/
 --
--- Hôte : 127.0.0.1
--- Généré le : Dim 21 juin 2020 à 03:00
+-- Hôte : localhost
+-- Généré le : mar. 23 juin 2020 à 05:28
 -- Version du serveur :  10.4.11-MariaDB
--- Version de PHP : 7.2.30
+-- Version de PHP : 7.2.31
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -79,15 +79,20 @@ CREATE TABLE `danger` (
   `latitude` text NOT NULL,
   `typeActeur` text NOT NULL,
   `sexeVictime` text NOT NULL,
-  `sexeResponsable` text NOT NULL
+  `sexeResponsable` text NOT NULL,
+  `dateAjout` date NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Déchargement des données de la table `danger`
 --
 
-INSERT INTO `danger` (`id`, `numeroOrdre`, `description`, `date`, `source`, `idUtilisateur`, `Lieu`, `dangerType`, `descripendroit`, `pays`, `ville`, `longitude`, `latitude`, `typeActeur`, `sexeVictime`, `sexeResponsable`) VALUES
-(1, '01dxdx', 'longitudelongitudelongitudelongitudelongitudelongitude', '0000-00-00', 'InfoIvoire', 33, 'fcfsfcfscfs', 'Troubles(manifestation)', 'dffffdcfdcfdcd', 'Côte d\'Ivoire', 'Abengourou', '1222', '333', 'Femme', 'Masculin', 'Masculin');
+INSERT INTO `danger` (`id`, `numeroOrdre`, `description`, `date`, `source`, `idUtilisateur`, `Lieu`, `dangerType`, `descripendroit`, `pays`, `ville`, `longitude`, `latitude`, `typeActeur`, `sexeVictime`, `sexeResponsable`, `dateAjout`) VALUES
+(1, '01dxdx', 'longitudelongitudelongitudelongitudelongitudelongitude', '0000-00-00', 'InfoIvoire', 33, 'fcfsfcfscfs', 'Troubles(manifestation)', 'dffffdcfdcfdcd', 'Côte d\'Ivoire', 'Abengourou', '1222', '333', 'Femme', 'Masculin', 'Masculin', '2020-06-20'),
+(3, '0001IND-06-21-2021', 'pas de description', '2020-06-20', 'www.abidjan.net', 35, 'Autoroute du Nord vers atékoubé', 'Inondation', 'L\'endroit est un autoroute', 'Côte d\'Ivoire', 'Attecoube', '-4.02357', '5.36507', 'Goupe de personne', 'Masculin', 'pas de responsable', '2020-06-21'),
+(4, '0002ACC-06-21-2020', 'rien', '2020-06-12', 'www.abidjant.net', 35, 'Autoroute du Nord', 'Accident', 'Autoroute du nord en quittant adjamè pour yopougon, au niveau l\'entréprise de fabrication de ciment', 'Côte d\'Ivoire', 'Abidjan, autoroute Adjamé - yopougon', '-4.04145', '5.36507', 'Goupe de personne', 'Il y avait des garçons et aussi femmes', 'les responsable ne sont pas des humains,', '2020-05-21'),
+(5, '0003V2A-06-21-2020', 'ceci est un test', '2020-06-18', 'linfodrom', 35, 'Adjamé mosqué', 'Vole à l’arraché', 'Adjamé nom loin de la gare Nord', 'Côte d\'Ivoire', 'Adjame', '-4.02357', '5.36507', 'Goupe de personne', 'Feminin', 'Masculin', '2020-06-21'),
+(8, '003NO-23', 'ceci est un test', '2020-06-21', 'Abidjan.net', 35, 'Commerce', 'Arnaque', 'le lieu est situé au quartier commerce de la commune du plateau à abidjan', 'Côte d\'Ivoire', 'plateau', '-4.02357', '5.32332', 'Garçon', 'Masculin', 'Masculin', '2020-06-23');
 
 -- --------------------------------------------------------
 
@@ -122,21 +127,6 @@ INSERT INTO `dangertype` (`id`, `intitule`) VALUES
 (15, 'incendie'),
 (16, 'électrocution'),
 (17, 'bavure policière');
-
--- --------------------------------------------------------
-
---
--- Structure de la table `lieu`
---
-
-CREATE TABLE `lieu` (
-  `id` int(11) NOT NULL,
-  `nomDuLieu` varchar(255) NOT NULL,
-  `description` varchar(255) NOT NULL,
-  `latitude` int(11) NOT NULL,
-  `longitude` int(11) NOT NULL,
-  `idVille` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -220,8 +210,8 @@ INSERT INTO `utilisateurs` (`id`, `nom`, `prenom`, `genre`, `contact`, `adresse`
 (29, 'Abie', 'Raissa', 'Feminin', '87147883', 'Niangon, Yopougon', 'raisa0@gmail.com', '$2y$10$lNRy2fHUBBPdkh74m4YPje2gq6o9qOeYzcgmhGMQODSTXRHHohNY6', '2020-06-20 15:12:56', 2, NULL),
 (30, 'Aka', 'Lory', 'Feminin', '87147883', 'Niangon, Yopougon', 'loryaka@gmail.com', '$2y$10$G30tPI7Xst/h4dzWSlYkuedoV4Fl//rreWoTtuVj.r0.5rl4JygQO', '2020-06-20 15:36:37', 2, NULL),
 (32, 'Meli', 'Anoa Melissa', 'Feminin', '43009312', 'Niangon, Yopougon', 'melissa@gmail.com', '$2y$10$z9cEY5Dq4CRZ3debUiBGxeVgIr/Njilo5aJ09d7CXCEqjxgbsCYCe', '2020-06-20 15:45:32', 2, NULL),
-(33, 'test2', 'loria', 'Feminin', '000-0000-0000', 'Niangon, Yopougon', 'teste0@gmail.com', '$2y$10$3Ax1NMsGTUIR33V.ONTLI.oAXhXrbbggFX2KOPJ6Onkv0um/JI7cO', '2020-06-20 15:58:07', 2, NULL),
-(34, 'Melis', 'Issouf', 'Masculin', '84-147-882', 'Niangon, Yopougon', 'issoufz@gmail.com', '$2y$10$irCWPBxRM6O2.s/vd/8nUuhDZVP6sxTIFkceIeB4Yf2ieOq4.lNSu', '2020-06-20 17:09:37', 2, NULL);
+(33, 'test2', 'Loriane', 'Feminin', '85154865', 'Niangon, Yopougon', 'teste0@gmail.com', '$2y$10$3Ax1NMsGTUIR33V.ONTLI.oAXhXrbbggFX2KOPJ6Onkv0um/JI7cO', '2020-06-20 15:58:07', 2, NULL),
+(35, 'Opérateur', 'koné', 'Masculin', '05285478', 'Bouaflé, CI', 'kouame@gmail.com', '$2y$10$Ru6v/jJ6kyt8SnmXLT3P8e/GHpn05Au6ivK/v5BdySHU5Ucio/Emu', '2020-06-21 09:03:44', 2, NULL);
 
 -- --------------------------------------------------------
 
@@ -234,7 +224,7 @@ CREATE TABLE `ville` (
   `ville` varchar(50) COLLATE utf8_estonian_ci NOT NULL,
   `lat` double NOT NULL,
   `lng` double NOT NULL,
-  `pays` varchar(255) COLLATE utf8_estonian_ci NOT NULL
+  `pays` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_estonian_ci;
 
 --
@@ -242,70 +232,76 @@ CREATE TABLE `ville` (
 --
 
 INSERT INTO `ville` (`id`, `ville`, `lat`, `lng`, `pays`) VALUES
-(10, 'adjame', 5.36507, -4.02357, 'Côte d\'Ivoire'),
-(11, 'attecoube', 5.33625, -4.04145, 'Côte d\'Ivoire'),
-(12, 'cocody', 5.36022, -3.96744, 'Côte d\'Ivoire'),
-(13, 'koumassi', 5.30298, -3.94194, 'Côte d\'Ivoire'),
-(14, 'marcory', 5.30271, -3.98274, 'Côte d\'Ivoire'),
-(15, 'plateau', 5.32332, -4.02357, 'Côte d\'Ivoire'),
-(16, 'portbouet', 5.27725, -3.8859, 'Côte d\'Ivoire'),
-(17, 'treichville', 5.29209, -4.01336, 'Côte d\'Ivoire'),
-(18, 'yopougon', 5.31767, -4.08999, 'Côte d\'Ivoire'),
-(19, 'abengourou', 6.7157, -3.48013, 'Côte d\'Ivoire'),
-(20, 'aboisso', 5.47451, -3.20308, 'Côte d\'Ivoire'),
-(21, 'adzope', 6.10715, -3.85535, 'Côte d\'Ivoire'),
-(22, 'agboville', 5.9355, -4.22308, 'Côte d\'Ivoire'),
-(23, 'agnibilekrou', 7.13028, -3.20308, 'Côte d\'Ivoire'),
-(24, 'anyama', 5.48771, -4.05166, 'Côte d\'Ivoire'),
-(26, 'beoumi', 7.67309, -5.57223, 'Côte d\'Ivoire'),
-(27, 'bingerville', 5.35036, -3.87571, 'Côte d\'Ivoire'),
-(28, 'bocanda', 7.06591, -4.49543, 'Côte d\'Ivoire'),
-(29, 'bondoukou', 8.04788, -2.80786, 'Côte d\'Ivoire'),
-(30, 'bongouanou', 6.6487, -4.20515, 'Côte d\'Ivoire'),
-(31, 'bonoua', 5.27118, -3.59393, 'Côte d\'Ivoire'),
-(33, 'boundiali', 9.51836, -6.48232, 'Côte d\'Ivoire'),
-(34, 'dabou', 5.32621, -4.36679, 'Côte d\'Ivoire'),
-(35, 'daloa', 6.88833, -6.43969, 'Côte d\'Ivoire'),
-(36, 'bouaflé', 6.98274, -5.74051, 'Côte d\'Ivoire'),
-(37, 'danané', 7.2676, -8.14478, ''),
-(38, 'daoukro', 7.0654, -3.95724, ''),
-(39, 'dimbokro', 6.65747, -4.71223, ''),
-(40, 'divo', 5.84154, -5.36255, ''),
-(41, 'douekoue', 6.74738, -7.36246, ''),
-(42, 'ferkessedougou', 9.5842, -5.19536, ''),
-(43, 'gagnoa', 6.15144, -5.95154, ''),
-(44, 'gohitafla', 7.48828, -5.88024, ''),
-(45, 'grandlahou', 5.13652, -5.02605, ''),
-(46, 'grandbassam', 5.22594, -3.75367, ''),
-(47, 'Grand-Bereby', 4.65137, -6.92205, ''),
-(48, 'guiglo', 6.54906, -7.49765, ''),
-(49, 'issia', 6.48761, -6.58368, ''),
-(50, 'jacqueville', 5.20598, -4.42335, ''),
-(52, 'katiola', 8.14023, -5.09631, ''),
-(53, 'korhogo', 9.46693, -5.61426, ''),
-(55, 'mbahiakro', 7.4548, -4.3411, ''),
-(58, 'mankono', 8.05991, -6.18983, ''),
-(59, 'odienne', 9.51888, -7.55722, ''),
-(60, 'oumé', 6.37413, -5.40966, ''),
-(61, 'sassandra', 4.95128, -6.09175, ''),
-(62, 'seguela', 7.96018, -6.6745, ''),
-(63, 'sinfra', 6.62334, -5.91456, ''),
-(64, 'soubré', 5.78662, -6.58902, ''),
-(65, 'tengrela', 10.482, -6.41306, ''),
-(66, 'tiassale', 5.90426, -4.82614, ''),
-(67, 'Toulepleu', 6.57956, -8.4102, ''),
-(68, 'toumodi', 6.55603, -5.01565, ''),
-(69, 'vavoua', 7.37506, -6.47699, ''),
-(70, 'yamoussoukro', 6.82762, -5.28934, ''),
-(71, 'zuenoula', 7.42404, -6.05204, ''),
-(72, 'Bouna', 9.27166, -2.99256, ''),
-(73, 'lakota', 5.85947, -5.67735, ''),
-(74, 'kani', 8.47784, -6.60504, ''),
-(75, 'man', 7.40643, -7.55722, ''),
-(76, 'dabakala', 8.36626, -4.43364, ''),
-(77, 'kong', 9.15102, -4.61018, ''),
-(78, 'Touba', 8.28417, -7.68194, ''),
-(79, 'bouake', 7.69047, -5.03905, '');
+(10, 'adjame', 5.36507, -4.02357, 1),
+(11, 'attecoube', 5.33625, -4.04145, 1),
+(12, 'cocody', 5.36022, -3.96744, 1),
+(13, 'koumassi', 5.30298, -3.94194, 1),
+(14, 'marcory', 5.30271, -3.98274, 1),
+(15, 'plateau', 5.32332, -4.02357, 1),
+(16, 'portbouet', 5.27725, -3.8859, 1),
+(17, 'treichville', 5.29209, -4.01336, 1),
+(18, 'yopougon', 5.31767, -4.08999, 1),
+(19, 'abengourou', 6.7157, -3.48013, 1),
+(20, 'aboisso', 5.47451, -3.20308, 1),
+(21, 'adzope', 6.10715, -3.85535, 1),
+(22, 'agboville', 5.9355, -4.22308, 1),
+(23, 'agnibilekrou', 7.13028, -3.20308, 1),
+(24, 'anyama', 5.48771, -4.05166, 1),
+(26, 'beoumi', 7.67309, -5.57223, 1),
+(27, 'bingerville', 5.35036, -3.87571, 1),
+(28, 'bocanda', 7.06591, -4.49543, 1),
+(29, 'bondoukou', 8.04788, -2.80786, 1),
+(30, 'bongouanou', 6.6487, -4.20515, 1),
+(31, 'bonoua', 5.27118, -3.59393, 1),
+(33, 'boundiali', 9.51836, -6.48232, 1),
+(34, 'dabou', 5.32621, -4.36679, 1),
+(35, 'daloa', 6.88833, -6.43969, 1),
+(36, 'bouaflé', 6.98274, -5.74051, 1),
+(37, 'danané', 7.2676, -8.14478, 1),
+(38, 'daoukro', 7.0654, -3.95724, 1),
+(39, 'dimbokro', 6.65747, -4.71223, 1),
+(40, 'divo', 5.84154, -5.36255, 1),
+(41, 'douekoue', 6.74738, -7.36246, 1),
+(42, 'ferkessedougou', 9.5842, -5.19536, 1),
+(43, 'gagnoa', 6.15144, -5.95154, 1),
+(44, 'gohitafla', 7.48828, -5.88024, 1),
+(45, 'grandlahou', 5.13652, -5.02605, 1),
+(46, 'grandbassam', 5.22594, -3.75367, 1),
+(47, 'Grand-Bereby', 4.65137, -6.92205, 1),
+(48, 'guiglo', 6.54906, -7.49765, 1),
+(49, 'issia', 6.48761, -6.58368, 1),
+(50, 'jacqueville', 5.20598, -4.42335, 1),
+(52, 'katiola', 8.14023, -5.09631, 1),
+(53, 'korhogo', 9.46693, -5.61426, 1),
+(55, 'mbahiakro', 7.4548, -4.3411, 1),
+(58, 'mankono', 8.05991, -6.18983, 1),
+(59, 'odienne', 9.51888, -7.55722, 1),
+(60, 'oumé', 6.37413, -5.40966, 1),
+(61, 'sassandra', 4.95128, -6.09175, 1),
+(62, 'seguela', 7.96018, -6.6745, 1),
+(63, 'sinfra', 6.62334, -5.91456, 1),
+(64, 'soubré', 5.78662, -6.58902, 1),
+(65, 'tengrela', 10.482, -6.41306, 1),
+(66, 'tiassale', 5.90426, -4.82614, 1),
+(67, 'Toulepleu', 6.57956, -8.4102, 1),
+(68, 'toumodi', 6.55603, -5.01565, 1),
+(69, 'vavoua', 7.37506, -6.47699, 1),
+(70, 'yamoussoukro', 6.82762, -5.28934, 1),
+(71, 'zuenoula', 7.42404, -6.05204, 1),
+(72, 'Bouna', 9.27166, -2.99256, 1),
+(73, 'lakota', 5.85947, -5.67735, 1),
+(74, 'kani', 8.47784, -6.60504, 1),
+(75, 'man', 7.40643, -7.55722, 1),
+(76, 'dabakala', 8.36626, -4.43364, 1),
+(77, 'kong', 9.15102, -4.61018, 1),
+(78, 'Touba', 8.28417, -7.68194, 1),
+(79, 'bouake', 7.69047, -5.03905, 1),
+(80, 'Accra', 5.5600141, -0.2057437, 2),
+(81, 'Kumasi', 6.698081, -1.6230404, 2),
+(82, 'Tamale', 9.4051992, -0.8423986, 2),
+(83, 'Sekondi-Takoradi', 4.927456, -1.7490216, 2),
+(84, 'Ashaiman', 5.694385, -0.029529, 2),
+(85, 'Sunyani', 7.3384389, -2.3309226, 2);
 
 -- --------------------------------------------------------
 
@@ -355,13 +351,6 @@ ALTER TABLE `danger`
 --
 ALTER TABLE `dangertype`
   ADD PRIMARY KEY (`id`);
-
---
--- Index pour la table `lieu`
---
-ALTER TABLE `lieu`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idVille` (`idVille`);
 
 --
 -- Index pour la table `message`
@@ -420,19 +409,13 @@ ALTER TABLE `activites`
 -- AUTO_INCREMENT pour la table `danger`
 --
 ALTER TABLE `danger`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT pour la table `dangertype`
 --
 ALTER TABLE `dangertype`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
-
---
--- AUTO_INCREMENT pour la table `lieu`
---
-ALTER TABLE `lieu`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT pour la table `message`
@@ -456,13 +439,13 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT pour la table `utilisateurs`
 --
 ALTER TABLE `utilisateurs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT pour la table `ville`
 --
 ALTER TABLE `ville`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=86;
 
 --
 -- Contraintes pour les tables déchargées

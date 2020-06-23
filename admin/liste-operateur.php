@@ -157,7 +157,7 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                                 // Calcul du premier operateur de la page
                                 $premier = ($currentPage * $parPage) - $parPage;
 
-                          
+                                $sql = 'SELECT * FROM danger WHERE idUtilisateur=:userId ORDER BY dateAjout DESC LIMIT :premier, :parpage;';
                                 $sql = "SELECT utilisateurs.id,utilisateurs.nom,utilisateurs.prenom,utilisateurs.contact,utilisateurs.email,utilisateurs.adresse FROM utilisateurs LEFT JOIN roles ON roles.id=utilisateurs.idRole WHERE roles.intituleRole = 'ROLE_OPERATEUR' ORDER BY dateInscription DESC LIMIT :premier, :parpage";
                                 
                                 // On prépare la requête

@@ -104,9 +104,9 @@ if(!isset($_SESSION["connecter"]) || $_SESSION["connecter"] !== true){
                                 </span>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                                    <!-- <a class="dropdown-item" href="profil-operateur.php">
+                                    <a class="dropdown-item" href="profil-operateur.php">
                                         <i class="fa fa-user fa-sm fa-fw mr-2"></i> Mon Profil
-                                    </a> -->
+                                    </a>
                                     <a class="dropdown-item" href="../php/logout.php">
                                         <i class="fa fa-sign-out fa-sm fa-fw mr-2"></i> Déconnexion
                                     </a>

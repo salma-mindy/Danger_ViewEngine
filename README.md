@@ -9,7 +9,4 @@ Administration du site internet Danger view; elle permet aux administrateurs du 
   - Twitter bootstrap
   
 ## Quelques interfaces:
-[![N|Solid](https://cldup.com/dTxpPi9lDf.thumb.png)](https://nodesource.com/products/nsolid)
-
-[![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
-
+[![N|Solid](https://nsa40.casimages.com/img/2020/11/10/201110113814305800.png)](https://nsa40.casimages.com/img/2020/11/10/201110113814305800.png)
